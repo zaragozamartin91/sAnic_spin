@@ -19,6 +19,8 @@ class Preloader {
 
             this.scene.load.multiatlas('sparkle', 'assets/sparkle.json', 'assets');
             this.scene.load.multiatlas('explosion', 'assets/explosion.json', 'assets');
+
+            this.scene.load.image('spin', 'assets/circle.png');
         });
     }
 }

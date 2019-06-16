@@ -5,6 +5,7 @@ import Player from './Player';
 import GameText from './GameText';
 import Sparkle from './Sparkle';
 import Explosion from './Explosion';
+import Spin from './Spin';
 import BaseScene from './BaseScene';
 import PlatformGroup from './PlatformGroup';
 
@@ -26,12 +27,17 @@ class Scene01 extends BaseScene {
         this.angleText = new GameText(this.gameScene);
 
         this.bg = new Background(this.gameScene);
+
+        this.spin = new Spin(this.gameScene);
     }
 
 
     preload() {
         console.log("PRELOAD");
         this.preloader.init();
+
+        //this.gameScene.load.image('wizball', 'assets/circle.png');
+        //this.gameScene.load.image('wizball', 'assets/wizball.png');
     }
 
     create() {
@@ -43,7 +49,7 @@ class Scene01 extends BaseScene {
         this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
         this.scoreText.init(0, 0, 'Score: 0');
         this.angleText.init(0, 32, 'Angle: 0');
-        
+
         this.platforms.init()
             .create(400, 568, 2)
             .create(600, 400)
@@ -139,6 +145,26 @@ class Scene01 extends BaseScene {
         this.physics.add.collider(this.player.sprite, this.bombs, (p, _) => {
             this.player.die();
         });
+
+        const radius = 10;
+
+        this.spin.init(this.player);
+        this.physics.add.collider(this.platforms.group, this.spin.sprite);
+
+        const circle = this.gameScene.add.circle(100, 450, radius, 0xABCDEF)
+        this.physics.add.existing(circle, true);
+        circle.body.setCircle(radius);
+        circle.body.x -= radius / 2;
+        circle.body.y -= radius / 2;
+        this.physics.add.overlap(this.player.sprite, circle, (p, _) => {
+            this.explosion.enableBody(true, this.player.x, this.player.y);
+            this.explosion.setPosition(this.player.x, this.player.y);
+            this.explosion.playAnim();
+            console.log("Circle collision!");
+        });
+        this.physics.add.collider(this.platforms.group, circle);
+        window.circle = circle;
+        window.spin = this.spin;
 
         /* MANEJO DE CAMARA ----------------------------------------------------------------------------------------------------------- */
 
