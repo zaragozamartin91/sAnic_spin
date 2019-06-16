@@ -64,6 +64,8 @@ class Scene01 extends BaseScene {
         this.explosion.init(100, 450);
         this.explosion.disableBody(true, true);
 
+        this.spin.init(this.player);
+
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
 
@@ -146,24 +148,15 @@ class Scene01 extends BaseScene {
             this.player.die();
         });
 
-        const radius = 10;
+        
 
-        this.spin.init(this.player);
-        this.physics.add.collider(this.platforms.group, this.spin.sprite);
-
-        const circle = this.gameScene.add.circle(100, 450, radius, 0xABCDEF)
-        this.physics.add.existing(circle, true);
-        circle.body.setCircle(radius);
-        circle.body.x -= radius / 2;
-        circle.body.y -= radius / 2;
-        this.physics.add.overlap(this.player.sprite, circle, (p, _) => {
+        this.physics.add.overlap(this.player.sprite, this.spin.sprite, (p, _) => {
             this.explosion.enableBody(true, this.player.x, this.player.y);
             this.explosion.setPosition(this.player.x, this.player.y);
             this.explosion.playAnim();
             console.log("Circle collision!");
         });
-        this.physics.add.collider(this.platforms.group, circle);
-        window.circle = circle;
+
         window.spin = this.spin;
 
         /* MANEJO DE CAMARA ----------------------------------------------------------------------------------------------------------- */

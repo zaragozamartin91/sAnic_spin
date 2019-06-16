@@ -12,9 +12,10 @@ class Spin {
     init(player) {
         const scene = this.scene;
 
-        this.p_sprite = scene.physics.add.staticSprite(100, 450, 'spin');
+        this.p_sprite = scene.physics.add.sprite(100, 450, 'spin');
         this.player = player;
-        this.p_sprite.body.setCircle(45);
+        this.p_sprite.body.setCircle(this.p_sprite.width/2);
+        this.p_sprite.body.allowGravity = false;
     }
 
     get sprite() { return this.p_sprite; }
@@ -30,7 +31,24 @@ class Spin {
     /**
      * Reproduce la animacion.
      */
-    playAnim() { this.sprite.anims.play(ANIM_KEY, true); }
+    playAnim() { 
+        this.sprite.scaleX = this.sprite.scaleY = 0.1;
+        const self = this;
+        this.scene.tweens.add({
+            targets: self.sprite,
+            scaleX: 1,
+            scaleY: 1,
+            
+            ease: 'Power1',
+            duration: 1000,
+            yoyo: true,
+            repeat: 10,
+            onStart: function () { console.log('onStart'); console.log(arguments); },
+            onComplete: function () { console.log('onComplete'); console.log(arguments); },
+            onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
+            onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
+        });    
+     }
 
     /**
      * Desactiva un cuerpo de phaser.
@@ -55,3 +73,25 @@ class Spin {
 }
 
 export default Spin;
+
+
+
+/*
+const radius = 10;
+
+        const circle = this.gameScene.add.circle(100, 450, radius, 0xABCDEF)
+        this.physics.add.existing(circle, true);
+        circle.body.setCircle(radius);
+        circle.body.x -= radius / 2;
+        circle.body.y -= radius / 2;
+        this.physics.add.overlap(this.player.sprite, circle, (p, _) => {
+            this.explosion.enableBody(true, this.player.x, this.player.y);
+            this.explosion.setPosition(this.player.x, this.player.y);
+            this.explosion.playAnim();
+            console.log("Circle collision!");
+        });
+        this.physics.add.collider(this.platforms.group, circle);
+        window.circle = circle;
+
+
+*/
