@@ -70,6 +70,11 @@ class Spin {
     enableBody(reset, x, y, enableGameObject = true, showGameObject = true) {
         this.sprite.enableBody(reset, x, y, enableGameObject, showGameObject);
     }
+
+    update() {
+        this.sprite.x = this.player.x;
+        this.sprite.y = this.player.y;
+    }
 }
 
 export default Spin;

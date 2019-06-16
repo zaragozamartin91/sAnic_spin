@@ -279,8 +279,6 @@ class Player {
             this.setAccelerationX(0);
             this.playAnim('jump');
 
-            console.log('Velocidad angular: ', this.angularVelocity);
-
             if (this.checkLeftPress()) { return this.rotateLeftMidair(); }
             if (this.checkRightPress()) { return this.rotateRightMidair(); }
 

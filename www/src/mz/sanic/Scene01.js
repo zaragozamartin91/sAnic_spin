@@ -24,7 +24,7 @@ class Scene01 extends BaseScene {
 
         this.score = 0;
         this.scoreText = new GameText(this.gameScene);
-        this.angleText = new GameText(this.gameScene);
+        this.debugText = new GameText(this.gameScene);
 
         this.bg = new Background(this.gameScene);
 
@@ -48,7 +48,7 @@ class Scene01 extends BaseScene {
 
         this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
         this.scoreText.init(0, 0, 'Score: 0');
-        this.angleText.init(0, 32, 'Angle: 0');
+        this.debugText.init(0, 32, '');
 
         this.platforms.init()
             .create(400, 568, 2)
@@ -149,12 +149,10 @@ class Scene01 extends BaseScene {
         });
 
         
-
-        this.physics.add.overlap(this.player.sprite, this.spin.sprite, (p, _) => {
-            this.explosion.enableBody(true, this.player.x, this.player.y);
-            this.explosion.setPosition(this.player.x, this.player.y);
-            this.explosion.playAnim();
-            console.log("Circle collision!");
+        var cc = 0;
+        this.physics.add.overlap(this.platforms.group, this.spin.sprite, (p, s) => {
+            let text = p.y < s.y ? 'bounce up' : 'bounce down';
+            this.debugText.setText(text);
         });
 
         window.spin = this.spin;
@@ -171,7 +169,7 @@ class Scene01 extends BaseScene {
 
     update() {
         this.player.update();
-        this.angleText.setText('Angle: ' + (parseInt(this.player.angle / 10) * 10));
+        this.spin.update();
         this.bg.update(this.player.body.velocity.x, this.player.body.velocity.y);
     }
 }
