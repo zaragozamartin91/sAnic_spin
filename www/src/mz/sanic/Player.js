@@ -12,6 +12,8 @@ const JUMP_POWER = -330;
 
 const SPIN_TIMEOUT_MS = 200;
 
+const SPIN_ANGLE = 360 * 2;
+
 const EMPTY_LAMBDA = () => { };
 
 /* Variables temporales */
@@ -349,7 +351,7 @@ class Player {
             const self = this;
             this.scene.tweens.add({
                 targets: self.sprite,
-                angle: self.goingRight() ? self.angle + 360 : self.angle - 360,
+                angle: self.goingRight() ? self.angle + SPIN_ANGLE : self.angle - SPIN_ANGLE,
                 ease: 'Power1',
                 duration: self.spin.duration
             });
