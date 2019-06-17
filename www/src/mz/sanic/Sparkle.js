@@ -14,7 +14,7 @@ class Sparkle {
      * @param {Number} x Posicion x.
      * @param {Number} y Posicion y.
      */
-    init(x, y) {
+    init(x = 0, y = 0) {
         const scene = this.scene;
         this.p_sprite = scene.physics.add.staticSprite(x, y, 'sparkle', 'sonic2_sparkles_01.png');
 

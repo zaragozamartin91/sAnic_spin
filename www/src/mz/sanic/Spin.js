@@ -1,8 +1,12 @@
-import AssetLoader from './AssetLoader';
+const SPIN_DURATION_MS = 500;
+const HALF_SPIN_DURATION_MS = SPIN_DURATION_MS / 2;
+
+const EMPTY_FN = () => { };
 
 class Spin {
     constructor(scene) {
         this.scene = scene;
+        this.__duration = SPIN_DURATION_MS;
     }
 
     /**
@@ -14,11 +18,21 @@ class Spin {
 
         this.p_sprite = scene.physics.add.sprite(100, 450, 'spin');
         this.player = player;
-        this.p_sprite.body.setCircle(this.p_sprite.width/2);
+        this.p_sprite.body.setCircle(this.p_sprite.width / 2);
         this.p_sprite.body.allowGravity = false;
+
+        this.sprite.scaleX = this.sprite.scaleY = 0.1;
+
+        this.spinning = false;
     }
 
     get sprite() { return this.p_sprite; }
+
+    /**
+     * Obtiene la duracion del giro en ms
+     * @returns {Number} duracion del giro en ms
+     */
+    get duration() { return this.__duration; }
 
     /**
      * Establece la posicion.
@@ -31,24 +45,27 @@ class Spin {
     /**
      * Reproduce la animacion.
      */
-    playAnim() { 
-        this.sprite.scaleX = this.sprite.scaleY = 0.1;
+    playAnim({ completeCb = EMPTY_FN, startCb = EMPTY_FN }) {
+        if (this.spinning) { return; }
+
+        this.spinning = true;
         const self = this;
+
+        /* Establecemos como duracion la mitad del tiempo dado que la animacion hace un yoyo */
         this.scene.tweens.add({
             targets: self.sprite,
             scaleX: 1,
             scaleY: 1,
-            
+
             ease: 'Power1',
-            duration: 1000,
+            duration: HALF_SPIN_DURATION_MS,
             yoyo: true,
-            repeat: 10,
-            onStart: function () { console.log('onStart'); console.log(arguments); },
-            onComplete: function () { console.log('onComplete'); console.log(arguments); },
-            onYoyo: function () { console.log('onYoyo'); console.log(arguments); },
-            onRepeat: function () { console.log('onRepeat'); console.log(arguments); },
-        });    
-     }
+            onStart: function () { self.spinning = true; startCb(); },
+            onComplete: function () { self.spinning = false; completeCb(); },
+            onYoyo: function () { },
+            onRepeat: function () { },
+        });
+    }
 
     /**
      * Desactiva un cuerpo de phaser.

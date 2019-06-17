@@ -8,8 +8,9 @@ const ACCEL = MAX_SPEED_X * 3 / 4;
 const HALF_ACCEL = ACCEL / 2;
 const TRIPLE_ACCEL = ACCEL * 3;
 
-/* Limite o tolerancia de angulo de caida */
-const ANGLE_THRESHOLD = 45;
+const JUMP_POWER = -330;
+
+const SPIN_TIMEOUT_MS = 200;
 
 const EMPTY_LAMBDA = () => { };
 
@@ -66,6 +67,9 @@ class Player {
         this.checkJumpPress = EMPTY_LAMBDA;
         this.checkLeftPress = EMPTY_LAMBDA;
         this.checkRightPress = EMPTY_LAMBDA;
+
+        /* Controla si el personaje puede girar */
+        this.canSpin = false;
     }
 
     get sprite() { return this.player; }
@@ -89,6 +93,15 @@ class Player {
     get anims() { return this.player.anims; }
 
     get angle() { return this.player.angle; }
+
+    /**
+     * Establece el componente de giro.
+     * @param {Spin} s Spin o giro
+     */
+    set spin(s) { this._spin = s; }
+
+    get spin() { return this._spin; }
+
 
     /**
      * Voltea sprite del jugador.
@@ -212,6 +225,8 @@ class Player {
      */
     platformHandler() {
         return (_, __) => {
+            this.canSpin = false;
+
             //TEMP.angle = Math.abs(this.angle) % 360;
             TEMP.mustDie = Math.abs(this.velocity.y) >= MAX_SPEED_Y
             //TEMP.mustDie = TEMP.angle > ANGLE_THRESHOLD && this.touchingDown();
@@ -259,7 +274,7 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        //console.log("Vel X: ", this.velocity.x);
+        console.log("canSpin: ", this.canSpin);
 
         if (this.standed && this.touchingDown()) {
             if (this.checkLeftPress()) { return this.goLeft(); }
@@ -281,10 +296,11 @@ class Player {
             this.setAccelerationX(0);
             this.playAnim('jump');
 
-            if (this.checkLeftPress()) { return this.rotateLeftMidair(); }
-            if (this.checkRightPress()) { return this.rotateRightMidair(); }
+            if (this.checkJumpPress()) { return this.doSpin(); }
 
-            return this.setAngularAcceleration(0);
+            // if (this.checkLeftPress()) { return this.rotateLeftMidair(); }
+            // if (this.checkRightPress()) { return this.rotateRightMidair(); }
+            // return this.setAngularAcceleration(0);
         }
     }
 
@@ -295,12 +311,14 @@ class Player {
     }
 
     jump() {
-        this.setVelocityY(-330);
+        this.setVelocityY(JUMP_POWER);
         this.playAnim('jump', true);
         this.initialAngularVelocity = this.velocity.x;
         this.setAngularVelocity(this.initialAngularVelocity);
         this.jumped = true;
         this.standed = false;
+
+        setTimeout(() => this.canSpin = true, SPIN_TIMEOUT_MS);
     }
 
     goLeft() {
@@ -317,6 +335,21 @@ class Player {
     rotateRightMidair() {
         TEMP.angularAccel = Math.abs(this.initialAngularVelocity);
         return this.setAngularAcceleration(TEMP.angularAccel);
+    }
+
+    doSpin() {
+        if (this.canSpin) {
+            this.canSpin = false;
+            this.spin.playAnim({ completeCb: () => this.canSpin = true });
+
+            const self = this;
+            this.scene.tweens.add({
+                targets: self.sprite,
+                angle: self.goingRight() ? self.angle + 360 : self.angle - 360,
+                ease: 'Power1',
+                duration: self.spin.duration
+            });
+        }
     }
 }
 

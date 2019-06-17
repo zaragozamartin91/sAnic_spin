@@ -8,6 +8,7 @@ import Explosion from './Explosion';
 import Spin from './Spin';
 import BaseScene from './BaseScene';
 import PlatformGroup from './PlatformGroup';
+import WallGroup from './WallGroup';
 
 
 class Scene01 extends BaseScene {
@@ -21,6 +22,7 @@ class Scene01 extends BaseScene {
         this.explosion = new Explosion(this.gameScene); // explosion
 
         this.platforms = new PlatformGroup(this.gameScene);
+        this.walls = new WallGroup(this.gameScene);
 
         this.score = 0;
         this.scoreText = new GameText(this.gameScene);
@@ -58,18 +60,19 @@ class Scene01 extends BaseScene {
 
         this.bombs = this.physics.add.group();
 
-        this.sparkle.init(100, 450);
+        this.sparkle.init();
         this.sparkle.disableBody(true, true);
+
+        this.spin.init(this.player);
 
         this.explosion.init(100, 450);
         this.explosion.disableBody(true, true);
-
-        this.spin.init(this.player);
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
 
         this.player.init(100, 450);
+        this.player.spin = this.spin;
         this.player.setInputManager({
             checkJumpPress: () => this.checkJumpPress(),
             checkLeftPress: () => this.checkLeftPress(),
