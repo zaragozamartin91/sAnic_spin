@@ -148,10 +148,9 @@ class Scene01 extends BaseScene {
             this.player.die();
         });
 
-        
-        var cc = 0;
+        let text = '';
         this.physics.add.overlap(this.platforms.group, this.spin.sprite, (p, s) => {
-            let text = p.y < s.y ? 'bounce up' : 'bounce down';
+            text = p.y < s.y ? 'bounce up' : 'bounce down';
             this.debugText.setText(text);
         });
 

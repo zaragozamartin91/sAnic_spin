@@ -9,9 +9,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "webpack --config webpack.config.js",
     "browser": "cordova run browser --live-reload",
-    "android": "cordova emulate android",
+    "android": "cordova run android --release",
     "compile_run_linux": "webpack --config webpack.config.js ; cordova run browser --live-reload",
-    "compile_run_win": "webpack --config webpack.config.js && cordova run browser --live-reload"
+    "compile_run_win": "webpack --config webpack.config.js && cordova run browser --live-reload",
+    "list_devices": "cordova run --list"
   },
   "author": "Martin Z",
   "license": "ISC",

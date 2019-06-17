@@ -212,9 +212,11 @@ class Player {
      */
     platformHandler() {
         return (_, __) => {
-            TEMP.angle = Math.abs(this.angle) % 360;
-            TEMP.mustDie = TEMP.angle > ANGLE_THRESHOLD && this.touchingDown();
-            TEMP.landSuccess = this.jumped && TEMP.angle <= ANGLE_THRESHOLD && this.touchingDown();
+            //TEMP.angle = Math.abs(this.angle) % 360;
+            TEMP.mustDie = Math.abs(this.velocity.y) >= MAX_SPEED_Y
+            //TEMP.mustDie = TEMP.angle > ANGLE_THRESHOLD && this.touchingDown();
+            TEMP.landSuccess = this.jumped;
+            //TEMP.landSuccess = this.jumped && TEMP.angle <= ANGLE_THRESHOLD && this.touchingDown();
 
             if (TEMP.mustDie) {
                 console.log('MUST DIE! angle: ', TEMP.angle);
