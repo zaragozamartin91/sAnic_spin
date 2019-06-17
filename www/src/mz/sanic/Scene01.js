@@ -5,8 +5,10 @@ import Player from './Player';
 import GameText from './GameText';
 import Sparkle from './Sparkle';
 import Explosion from './Explosion';
+import Spin from './Spin';
 import BaseScene from './BaseScene';
 import PlatformGroup from './PlatformGroup';
+import WallGroup from './WallGroup';
 
 
 class Scene01 extends BaseScene {
@@ -20,18 +22,24 @@ class Scene01 extends BaseScene {
         this.explosion = new Explosion(this.gameScene); // explosion
 
         this.platforms = new PlatformGroup(this.gameScene);
+        this.walls = new WallGroup(this.gameScene);
 
         this.score = 0;
         this.scoreText = new GameText(this.gameScene);
-        this.angleText = new GameText(this.gameScene);
+        this.debugText = new GameText(this.gameScene);
 
         this.bg = new Background(this.gameScene);
+
+        this.spin = new Spin(this.gameScene);
     }
 
 
     preload() {
         console.log("PRELOAD");
         this.preloader.init();
+
+        //this.gameScene.load.image('wizball', 'assets/circle.png');
+        //this.gameScene.load.image('wizball', 'assets/wizball.png');
     }
 
     create() {
@@ -42,8 +50,8 @@ class Scene01 extends BaseScene {
 
         this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
         this.scoreText.init(0, 0, 'Score: 0');
-        this.angleText.init(0, 32, 'Angle: 0');
-        
+        this.debugText.init(0, 32, '');
+
         this.platforms.init()
             .create(400, 568, 2)
             .create(600, 400)
@@ -52,8 +60,10 @@ class Scene01 extends BaseScene {
 
         this.bombs = this.physics.add.group();
 
-        this.sparkle.init(100, 450);
+        this.sparkle.init();
         this.sparkle.disableBody(true, true);
+
+        this.spin.init(this.player);
 
         this.explosion.init(100, 450);
         this.explosion.disableBody(true, true);
@@ -62,6 +72,7 @@ class Scene01 extends BaseScene {
         // agregamos un ArcadeSprite del jugador
 
         this.player.init(100, 450);
+        this.player.spin = this.spin;
         this.player.setInputManager({
             checkJumpPress: () => this.checkJumpPress(),
             checkLeftPress: () => this.checkLeftPress(),
@@ -140,6 +151,14 @@ class Scene01 extends BaseScene {
             this.player.die();
         });
 
+        let text = '';
+        this.physics.add.overlap(this.platforms.group, this.spin.sprite, (p, s) => {
+            text = p.y < s.y ? 'bounce up' : 'bounce down';
+            this.debugText.setText(text);
+        });
+
+        window.spin = this.spin;
+
         /* MANEJO DE CAMARA ----------------------------------------------------------------------------------------------------------- */
 
         /* Con esta funcion podemos establecer los limites de la camara */
@@ -152,7 +171,7 @@ class Scene01 extends BaseScene {
 
     update() {
         this.player.update();
-        this.angleText.setText('Angle: ' + (parseInt(this.player.angle / 10) * 10));
+        this.spin.update();
         this.bg.update(this.player.body.velocity.x, this.player.body.velocity.y);
     }
 }

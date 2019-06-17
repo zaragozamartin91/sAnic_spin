@@ -8,8 +8,11 @@ const ACCEL = MAX_SPEED_X * 3 / 4;
 const HALF_ACCEL = ACCEL / 2;
 const TRIPLE_ACCEL = ACCEL * 3;
 
-/* Limite o tolerancia de angulo de caida */
-const ANGLE_THRESHOLD = 45;
+const JUMP_POWER = -330;
+
+const SPIN_TIMEOUT_MS = 200;
+
+const SPIN_ANGLE = 360 * 2;
 
 const EMPTY_LAMBDA = () => { };
 
@@ -66,6 +69,9 @@ class Player {
         this.checkJumpPress = EMPTY_LAMBDA;
         this.checkLeftPress = EMPTY_LAMBDA;
         this.checkRightPress = EMPTY_LAMBDA;
+
+        /* Controla si el personaje puede girar */
+        this.canSpin = false;
     }
 
     get sprite() { return this.player; }
@@ -89,6 +95,15 @@ class Player {
     get anims() { return this.player.anims; }
 
     get angle() { return this.player.angle; }
+
+    /**
+     * Establece el componente de giro.
+     * @param {Spin} s Spin o giro
+     */
+    set spin(s) { this._spin = s; }
+
+    get spin() { return this._spin; }
+
 
     /**
      * Voltea sprite del jugador.
@@ -212,9 +227,13 @@ class Player {
      */
     platformHandler() {
         return (_, __) => {
-            TEMP.angle = Math.abs(this.angle) % 360;
-            TEMP.mustDie = TEMP.angle > ANGLE_THRESHOLD && this.touchingDown();
-            TEMP.landSuccess = this.jumped && TEMP.angle <= ANGLE_THRESHOLD && this.touchingDown();
+            this.canSpin = false;
+
+            //TEMP.angle = Math.abs(this.angle) % 360;
+            TEMP.mustDie = Math.abs(this.velocity.y) >= MAX_SPEED_Y
+            //TEMP.mustDie = TEMP.angle > ANGLE_THRESHOLD && this.touchingDown();
+            TEMP.landSuccess = this.jumped;
+            //TEMP.landSuccess = this.jumped && TEMP.angle <= ANGLE_THRESHOLD && this.touchingDown();
 
             if (TEMP.mustDie) {
                 console.log('MUST DIE! angle: ', TEMP.angle);
@@ -257,11 +276,11 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        //console.log("Vel X: ", this.velocity.x);
+        console.log("canSpin: ", this.canSpin);
 
         if (this.standed && this.touchingDown()) {
-            if (this.checkLeftPress()) { return this.goLeft(); }
-            if (this.checkRightPress()) { return this.goRight(); }
+            if (this.checkLeftPress()) { return this.walkLeft(); }
+            if (this.checkRightPress()) { return this.walkRight(); }
 
             // si no presiono ningun boton...
             if (Math.abs(this.velocity.x) < HALF_ACCEL) {
@@ -279,34 +298,39 @@ class Player {
             this.setAccelerationX(0);
             this.playAnim('jump');
 
-            console.log('Velocidad angular: ', this.angularVelocity);
+            if (this.checkJumpPress()) { return this.doSpin(); }
 
-            if (this.checkLeftPress()) { return this.rotateLeftMidair(); }
-            if (this.checkRightPress()) { return this.rotateRightMidair(); }
-
-            return this.setAngularAcceleration(0);
+            // if (this.checkLeftPress()) { return this.rotateLeftMidair(); }
+            // if (this.checkRightPress()) { return this.rotateRightMidair(); }
+            // return this.setAngularAcceleration(0);
         }
     }
 
-    goRight() {
-        this.setAccelerationX(this.goingLeft() ? TRIPLE_ACCEL : ACCEL);
+    walkLeft() {
+        this.moveLeft();
+        this.flipX = true;
+        this.playAnim('left', true);
+    }
+
+    moveLeft() { this.setAccelerationX(this.goingRight() ? -TRIPLE_ACCEL : -ACCEL); }
+
+    walkRight() {
+        this.moveRight();
         this.flipX = false;
         this.playAnim('right', true);
     }
 
+    moveRight() { this.setAccelerationX(this.goingLeft() ? TRIPLE_ACCEL : ACCEL); }
+
     jump() {
-        this.setVelocityY(-330);
+        this.setVelocityY(JUMP_POWER);
         this.playAnim('jump', true);
         this.initialAngularVelocity = this.velocity.x;
         this.setAngularVelocity(this.initialAngularVelocity);
         this.jumped = true;
         this.standed = false;
-    }
 
-    goLeft() {
-        this.setAccelerationX(this.goingRight() ? -TRIPLE_ACCEL : -ACCEL);
-        this.flipX = true;
-        this.playAnim('left', true);
+        setTimeout(() => this.canSpin = true, SPIN_TIMEOUT_MS);
     }
 
     rotateLeftMidair() {
@@ -317,6 +341,21 @@ class Player {
     rotateRightMidair() {
         TEMP.angularAccel = Math.abs(this.initialAngularVelocity);
         return this.setAngularAcceleration(TEMP.angularAccel);
+    }
+
+    doSpin() {
+        if (this.canSpin) {
+            this.canSpin = false;
+            this.spin.playAnim({ completeCb: () => this.canSpin = true });
+
+            const self = this;
+            this.scene.tweens.add({
+                targets: self.sprite,
+                angle: self.goingRight() ? self.angle + SPIN_ANGLE : self.angle - SPIN_ANGLE,
+                ease: 'Power1',
+                duration: self.spin.duration
+            });
+        }
     }
 }
 

@@ -8,6 +8,7 @@ class Preloader {
     init() {
         AssetLoader.loadFor(this.scene, 'IMAGES', () => {
             this.scene.load.image('ground', 'assets/platform.png');
+            this.scene.load.image('wall', 'assets/wall.png');
             this.scene.load.image('star', 'assets/star.png');
             this.scene.load.image('bomb', 'assets/bomb.png');
             //this.scene.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
@@ -19,6 +20,8 @@ class Preloader {
 
             this.scene.load.multiatlas('sparkle', 'assets/sparkle.json', 'assets');
             this.scene.load.multiatlas('explosion', 'assets/explosion.json', 'assets');
+
+            this.scene.load.image('spin', 'assets/circle.png');
         });
     }
 }

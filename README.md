@@ -19,7 +19,7 @@ _Todos los comandos mencionados tipo 'npm run *' deben correrse desde www/_
 * Correr `npm run add_browser` para agregar Browser.
 * Correr `npm run add_android` para agregar Android.
 
-__Nota__: Si los comandos anteriores no funcionan, probar instalar cordova y webpack de forma global mediante `npm install -g cordova` y `npm install -g webpack` y luego correr `cordova platform add browser`.
+__Nota__: Si los comandos anteriores no funcionan, probar instalar cordova y webpack de forma global mediante `npm install -g cordova` y `npm install -g webpack` y luego correr `cordova platform add browser` y cordova platform add browser para agregar las plataformas _browser_ y _android_ respectivamente.
 
 ## Compilar fuentes (con webpack)
 
@@ -41,8 +41,15 @@ Correr `npm run android`.
 __Nota__: se requiere API level >= 27. Utilizar el AVD Manager del android studio para crear AVDs con API level suficiente.
 Ver: [https://developer.android.com/studio/run/managing-avds](https://developer.android.com/studio/run/managing-avds).
 
+__Nota__: en linux se requiere asignar a la variable de entorno ANDROID_HOME el path del directorio de instalacion del Android SDK. Tipicamente es ~/Android/Sdk. 
+
 ## Correr en un celular (El celular debe estar en modo Developer / modo debug habilitado)
+
+* Conectar el celular
+* Habilitar modo debug / modo developer
+* Habilitar modo __Picture Transfer Protocol__ (para linux)
+* Correr `npm run android`
 
 __Nota__: se recomienda tener cordova instalado.
 
-`cordova run android`
+
