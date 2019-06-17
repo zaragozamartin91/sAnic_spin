@@ -24,6 +24,7 @@ class Spin {
         this.sprite.scaleX = this.sprite.scaleY = 0.1;
 
         this.spinning = false;
+        this.disableBody();
     }
 
     get sprite() { return this.p_sprite; }
@@ -60,8 +61,8 @@ class Spin {
             ease: 'Power1',
             duration: HALF_SPIN_DURATION_MS,
             yoyo: true,
-            onStart: function () { self.spinning = true; startCb(); },
-            onComplete: function () { self.spinning = false; completeCb(); },
+            onStart: function () { self.enableBody(); self.spinning = true; startCb(); },
+            onComplete: function () { self.disableBody(); self.spinning = false; completeCb(); },
             onYoyo: function () { },
             onRepeat: function () { },
         });

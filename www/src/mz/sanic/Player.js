@@ -277,8 +277,8 @@ class Player {
         console.log("canSpin: ", this.canSpin);
 
         if (this.standed && this.touchingDown()) {
-            if (this.checkLeftPress()) { return this.goLeft(); }
-            if (this.checkRightPress()) { return this.goRight(); }
+            if (this.checkLeftPress()) { return this.walkLeft(); }
+            if (this.checkRightPress()) { return this.walkRight(); }
 
             // si no presiono ningun boton...
             if (Math.abs(this.velocity.x) < HALF_ACCEL) {
@@ -304,11 +304,21 @@ class Player {
         }
     }
 
-    goRight() {
-        this.setAccelerationX(this.goingLeft() ? TRIPLE_ACCEL : ACCEL);
+    walkLeft() {
+        this.moveLeft();
+        this.flipX = true;
+        this.playAnim('left', true);
+    }
+
+    moveLeft() { this.setAccelerationX(this.goingRight() ? -TRIPLE_ACCEL : -ACCEL); }
+
+    walkRight() {
+        this.moveRight();
         this.flipX = false;
         this.playAnim('right', true);
     }
+
+    moveRight() { this.setAccelerationX(this.goingLeft() ? TRIPLE_ACCEL : ACCEL); }
 
     jump() {
         this.setVelocityY(JUMP_POWER);
@@ -319,12 +329,6 @@ class Player {
         this.standed = false;
 
         setTimeout(() => this.canSpin = true, SPIN_TIMEOUT_MS);
-    }
-
-    goLeft() {
-        this.setAccelerationX(this.goingRight() ? -TRIPLE_ACCEL : -ACCEL);
-        this.flipX = true;
-        this.playAnim('left', true);
     }
 
     rotateLeftMidair() {
