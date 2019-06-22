@@ -29,6 +29,8 @@ class Spin {
 
     get sprite() { return this.p_sprite; }
 
+    get body() { return this.sprite.body; }
+
     /**
      * Obtiene la duracion del giro en ms
      * @returns {Number} duracion del giro en ms
@@ -92,6 +94,8 @@ class Spin {
     update() {
         this.sprite.x = this.player.x;
         this.sprite.y = this.player.y;
+        this.body.velocity.x = this.player.body.velocity.x;
+        this.body.velocity.y = this.player.body.velocity.y;
     }
 }
 
