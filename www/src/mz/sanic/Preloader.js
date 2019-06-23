@@ -22,6 +22,8 @@ class Preloader {
             this.scene.load.multiatlas('explosion', 'assets/explosion.json', 'assets');
 
             this.scene.load.image('spin', 'assets/circle.png');
+
+            this.scene.load.image('tower', 'assets/tower.jpg');
         });
     }
 }

@@ -9,6 +9,7 @@ import Spin from './Spin';
 import BaseScene from './BaseScene';
 import PlatformGroup from './PlatformGroup';
 import WallGroup from './WallGroup';
+import TowerGroup from './TowerGroup';
 
 
 class Scene01 extends BaseScene {
@@ -31,6 +32,8 @@ class Scene01 extends BaseScene {
         this.bg = new Background(this.gameScene);
 
         this.spin = new Spin(this.gameScene);
+
+        this.towers = new TowerGroup(this.gameScene);
     }
 
 
@@ -53,10 +56,18 @@ class Scene01 extends BaseScene {
         this.debugText.init(0, 32, '');
 
         this.platforms.init()
-            .create(400, 568, 2)
-            .create(600, 400)
-            .create(50, 250)
-            .create(750, 220);
+            .create(400, 1068, 2)
+            .create(600, 900)
+            .create(50, 750)
+            .create(750, 720);
+
+        /*this.walls.init()
+            .create(750, 720);*/
+
+
+        this.towers.init();
+        this.towers.create(1400, 720);
+
 
         this.bombs = this.physics.add.group();
 
@@ -71,7 +82,7 @@ class Scene01 extends BaseScene {
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
 
-        this.player.init(100, 450);
+        this.player.init(100, 950);
         this.player.spin = this.spin;
         this.player.setInputManager({
             checkJumpPress: () => this.checkJumpPress(),
@@ -110,7 +121,7 @@ class Scene01 extends BaseScene {
         this.stars = this.physics.add.group({
             key: 'star', //texture key to be the star image by default
             repeat: 6, //Because it creates 1 child automatically, repeating 11 times means we'll get 12 in total
-            setXY: { x: 12, y: 0, stepX: 70 } //this is used to set the position of the 12 children the Group creates. Each child will be placed starting at x: 12, y: 0 and with an x step of 70
+            setXY: { x: 12, y: 500, stepX: 70 } //this is used to set the position of the 12 children the Group creates. Each child will be placed starting at x: 12, y: 0 and with an x step of 70
         });
 
         this.stars.children.iterate(function (child) { child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)); });
@@ -120,9 +131,11 @@ class Scene01 extends BaseScene {
         /* In order to allow the player to collide with the platforms we can create a Collider object. 
         This object monitors two physics objects (which can include Groups) and checks for collisions or overlap between them. 
         If that occurs it can then optionally invoke your own callback, but for the sake of just colliding with platforms we don't require that */
-        this.physics.add.collider(this.player.sprite, this.platforms.group, this.player.platformHandler(() => this.checkJumpPress()));
+        this.physics.add.collider(this.player.sprite, this.platforms.group, this.player.platformHandler());
+        this.physics.add.collider(this.player.sprite, this.towers.group, this.player.platformHandler());
 
         this.physics.add.collider(this.stars, this.platforms.group);
+
 
         //This tells Phaser to check for an overlap between the player and any star in the stars Group
         //this.physics.add.overlap(this.player, this.stars, collectStar, null, this);
@@ -138,7 +151,7 @@ class Scene01 extends BaseScene {
                 this.stars.children.iterate(child => child.enableBody(true, child.x, 0, true, true));
                 let x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
 
-                let bomb = this.bombs.create(x, 16, 'bomb');
+                let bomb = this.bombs.create(x, 516, 'bomb');
                 bomb.setBounce(1);
                 bomb.setCollideWorldBounds(false);
                 bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
