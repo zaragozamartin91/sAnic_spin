@@ -6,7 +6,7 @@ screen.orientation.lock('portrait-primary');
 
 const MAX_WIDTH = 1024;
 const MAX_HEIGHT = 768;
-const GRAVITY_VAL = 300;
+const GRAVITY_VAL = 400;
 
 document.addEventListener('deviceready', function () {
     const worldWidth = Math.min(window.innerWidth, MAX_WIDTH);

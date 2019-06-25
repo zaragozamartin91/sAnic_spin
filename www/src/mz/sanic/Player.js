@@ -8,7 +8,11 @@ const ACCEL = MAX_SPEED_X * 3 / 4;
 const HALF_ACCEL = ACCEL / 2;
 const TRIPLE_ACCEL = ACCEL * 3;
 
-const JUMP_POWER = -330;
+const NEG_ACCEL = -ACCEL;
+const NEG_TRIPLE_ACCEL = -TRIPLE_ACCEL;
+
+const RAW_JUMP_POWER = 400;
+const JUMP_POWER = -RAW_JUMP_POWER;
 
 const SPIN_TIMEOUT_MS = 200;
 
@@ -236,12 +240,10 @@ class Player {
             //TEMP.landSuccess = this.jumped && TEMP.angle <= ANGLE_THRESHOLD && this.touchingDown();
 
             if (TEMP.mustDie) {
-                console.log('MUST DIE! angle: ', TEMP.angle);
                 return this.onLandFail();
             }
 
             if (TEMP.landSuccess) {
-                console.log('OUTSTANDING MOVE!');
                 this.onLandSuccess();
             }
 
@@ -312,7 +314,7 @@ class Player {
         this.playAnim('left', true);
     }
 
-    moveLeft() { this.setAccelerationX(this.goingRight() ? -TRIPLE_ACCEL : -ACCEL); }
+    moveLeft() { this.setAccelerationX(this.goingRight() ? NEG_TRIPLE_ACCEL : NEG_ACCEL); }
 
     walkRight() {
         this.moveRight();
