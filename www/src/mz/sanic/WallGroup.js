@@ -1,33 +1,9 @@
+import BaseGroup from './BaseGroup';
 
 /**
  * staticGroup de paredes.
  */
-class WallGroup {
-    constructor(scene) {
-        this.scene = scene;
-    }
-
-    get physics() { return this.scene.physics; }
-
-    /**
-     * Obtiene el grupo de paredes. group y sprite son sinonimos
-     */
-    get group() { return this.platforms; }
-
-    /**
-     * Obtiene el grupo de paredes. group y sprite son sinonimos
-     */
-    get sprite() { return this.platforms; }
-
-    /**
-     * Inicializa el grupo de paredes.
-     */
-    init() {
-        /* creo un grupo de cuerpos estaticos con iguales propiedades */
-        this.platforms = this.physics.add.staticGroup();
-        return this;
-    }
-
+class WallGroup extends BaseGroup {
     /**
      * Crea una pared y la agrega al grupo de paredes existentes.
      * @param {Number} x Posicion x
@@ -38,8 +14,8 @@ class WallGroup {
     create(x, y, scale = 1) {
         /* we scale this platform x2 with the function setScale(2) */
         /* The call to refreshBody() is required because we have scaled a static physics body, so we have to tell the physics world about the changes we made */
-        if (scale == 1) { this.platforms.create(x, y, 'wall'); }
-        else { this.platforms.create(x, y, 'wall').setScale(scale).refreshBody(); }
+        if (scale == 1) { this.legroup.create(x, y, 'wall'); }
+        else { this.legroup.create(x, y, 'wall').setScale(scale).refreshBody(); }
         return this;
     }
 }

@@ -64,10 +64,8 @@ class Scene01 extends BaseScene {
         /*this.walls.init()
             .create(750, 720);*/
 
-
         this.towers.init();
         this.towers.create(1400, 720);
-
 
         this.bombs = this.physics.add.group();
 
