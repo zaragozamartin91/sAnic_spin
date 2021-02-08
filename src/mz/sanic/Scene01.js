@@ -40,9 +40,6 @@ class Scene01 extends BaseScene {
     preload() {
         console.log("PRELOAD");
         this.preloader.init();
-
-        //this.gameScene.load.image('wizball', 'assets/circle.png');
-        //this.gameScene.load.image('wizball', 'assets/wizball.png');
     }
 
     create() {
@@ -61,9 +58,6 @@ class Scene01 extends BaseScene {
             .create(50, 750)
             .create(750, 720);
 
-        /*this.walls.init()
-            .create(750, 720);*/
-
         this.towers.init();
         this.towers.create(1400, 720);
 
@@ -74,7 +68,7 @@ class Scene01 extends BaseScene {
 
         this.spin.init(this.player);
 
-        this.explosion.init(100, 450);
+        this.explosion.init(100, 950);
         this.explosion.disableBody(true, true);
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
@@ -86,19 +80,6 @@ class Scene01 extends BaseScene {
             checkJumpPress: () => this.checkJumpPress(),
             checkLeftPress: () => this.checkLeftPress(),
             checkRightPress: () => this.checkRightPress()
-        });
-
-        this.player.setOnLandSuccess(() => {
-            this.sparkle.enableBody(true, this.player.x, this.player.y);
-            this.sparkle.setPosition(this.player.x, this.player.y + this.player.width / 2);
-            this.sparkle.playAnim();
-        });
-
-        this.player.setOnLandFail(() => {
-            this.explosion.enableBody(true, this.player.x, this.player.y);
-            this.explosion.setPosition(this.player.x, this.player.y);
-            this.explosion.playAnim();
-            this.player.die();
         });
 
         this.player.setOnDeath(() => {
@@ -159,6 +140,7 @@ class Scene01 extends BaseScene {
         this.physics.add.collider(this.bombs, this.platforms.group);
 
         this.physics.add.collider(this.player.sprite, this.bombs, (p, _) => {
+            this.explosion.explode(this.player.x, this.player.y);
             this.player.die();
         });
 

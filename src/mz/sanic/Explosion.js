@@ -5,6 +5,10 @@ const ANIM_KEY = 'explosion_anim';
 const ANIM_DURATION_MS = 500;
 
 class Explosion {
+    /**
+     * Crea un objeto de tipo explosion
+     * @param {Phaser.Scene} scene Escena del juego
+     */
     constructor(scene) {
         this.scene = scene;
     }
@@ -65,6 +69,17 @@ class Explosion {
      */
     enableBody(reset, x, y, enableGameObject = true, showGameObject = true) {
         this.sprite.enableBody(reset, x, y, enableGameObject, showGameObject);
+    }
+
+    /**
+     * Activa la animacion de explosion en la posicion indicada
+     * @param {number} x Posicion x
+     * @param {number} y Posicion y
+     */
+    explode(x, y) {
+        this.enableBody(true, x, y);
+        this.setPosition(x, y);
+        this.playAnim();
     }
 }
 

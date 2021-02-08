@@ -1,6 +1,14 @@
 
 
 class Background {
+    /**
+     * Crea un fondo de juego
+     * @param {Phaser.Scene} scene Escena de juego
+     * @param {number} x Posicion x inicial
+     * @param {number} y Posicion y inicial
+     * @param {number} w Ancho inicial
+     * @param {number} h Alto inicial
+     */
     constructor(scene, x, y, w, h) {
         this.scene = scene;
     }

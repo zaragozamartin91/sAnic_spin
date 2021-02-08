@@ -9,7 +9,7 @@ class BaseScene {
         this.half_worldHeight = worldHeight / 2;
 
         // create a new scene named "Game"
-        this.gameScene = new Phaser.Scene('Game');
+        this.gameScene = new Phaser.Scene('Scene01');
     }
 
     get input() { return this.gameScene.input; }
@@ -44,6 +44,11 @@ class BaseScene {
         return this.cursors.up.isDown || (this.pointer1.isDown && this.pointer1.y < this.half_worldHeight);
     }
 
+    preload() { throw new Error('Not implemented') }
+
+    create() { throw new Error('Not implemented') }
+
+    update() { throw new Error('Not implemented') }
 
     build() {
         this.gameScene.preload = () => this.preload();

@@ -9,7 +9,7 @@ if (!navigator.xr && self.isMobile && screen.orientation && screen.orientation.l
 
 const MAX_WIDTH = 1024;
 const MAX_HEIGHT = 768;
-const GRAVITY_VAL = 400;
+const GRAVITY_VAL = 600;
 
 document.onreadystatechange = function () {
     console.log("onreadystatechange CALLED!");

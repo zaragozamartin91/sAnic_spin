@@ -1,5 +1,9 @@
 
 class GameText {
+    /**
+     * Crea texto ajustable para mostrar estadisticas del juego
+     * @param {Phaser.Scene} scene Escena de juego
+     */
     constructor(scene) {
         this.scene = scene;
     }

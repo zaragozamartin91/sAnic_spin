@@ -1,6 +1,10 @@
 import AssetLoader from './AssetLoader';
 
 class Preloader {
+    /**
+     * Preloader base de los assets del juego
+     * @param {Phaser.Scene} scene Escena del juego
+     */
     constructor(scene) {
         this.scene = scene;
     }

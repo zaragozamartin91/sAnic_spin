@@ -1,17 +1,17 @@
 import AssetLoader from './AssetLoader';
 
-const MAX_SPEED_X = 200;
+const MAX_SPEED_X = 300;
 const MAX_SPEED_Y = 2000;
 
 /* Aceleracion del jugador mientras camina */
-const ACCEL = MAX_SPEED_X * 3 / 4;
-const HALF_ACCEL = ACCEL / 2;
+const ACCEL = MAX_SPEED_X * 0.75;
+const HALF_ACCEL = ACCEL * 0.5;
 const TRIPLE_ACCEL = ACCEL * 3;
 
 const NEG_ACCEL = -ACCEL;
 const NEG_TRIPLE_ACCEL = -TRIPLE_ACCEL;
 
-const RAW_JUMP_POWER = 400;
+const RAW_JUMP_POWER = 500;
 const JUMP_POWER = -RAW_JUMP_POWER;
 
 const SPIN_TIMEOUT_MS = 200;
@@ -24,6 +24,10 @@ const EMPTY_LAMBDA = () => { };
 const TEMP = { angle: 0, mustDie: false, landSuccess: false, angularAccel: 0 };
 
 class Player {
+    /**
+     * Crea un objeto de tipo jugador
+     * @param {Phaser.Scene} scene Escena del juego
+     */
     constructor(scene) {
         this.scene = scene;
     }
@@ -256,17 +260,6 @@ class Player {
         };
     };
 
-    /**
-     * Establece la funcion a ejecutar cuando ocurre un landing exitoso
-     * @param {Function} f  funcion a ejecutar cuando ocurre un landing exitoso
-     */
-    setOnLandSuccess(f) { this.onLandSuccess = f; }
-
-    /**
-     * Establece la funcion a ejecutar cuando ocurre un landing fallido
-     * @param {Function} f funcion a ejecutar cuando ocurre un landing fallido
-     */
-    setOnLandFail(f) { this.onLandFail = f; }
 
     /**
      * Establece la funcion a ejecutar cuando el jugador muere.

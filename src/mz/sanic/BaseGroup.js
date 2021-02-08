@@ -3,6 +3,10 @@
  * staticGroup de elementos.
  */
 class BaseGroup {
+    /**
+     * Crea un grupo de componentes
+     * @param {Phaser.Scene} scene 
+     */
     constructor(scene) {
         this.scene = scene;
     }
