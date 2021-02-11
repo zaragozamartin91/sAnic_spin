@@ -5,7 +5,7 @@ const animKeys = {};
 
 /**
  * Intenta cargar assets para una escena (en caso que no hayan sido cargados previamente.)
- * @param {Object} scene Objeto Phaser.Scene.
+ * @param {Phaser.Scene} scene Objeto Phaser.Scene.
  * @param {String} key Clave de assets (ej: 'player')
  * @param {Function} loaderFunction Lambda encargada de cargar los assets.
  */

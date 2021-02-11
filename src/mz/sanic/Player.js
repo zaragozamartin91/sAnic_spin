@@ -13,6 +13,7 @@ const NEG_TRIPLE_ACCEL = -TRIPLE_ACCEL;
 
 const RAW_JUMP_POWER = 500;
 const JUMP_POWER = -RAW_JUMP_POWER;
+const BOUNCE_POWER = JUMP_POWER * 0.75
 
 const SPIN_TIMEOUT_MS = 200;
 
@@ -80,6 +81,9 @@ class Player {
 
         /* Controla si el personaje puede girar */
         this.canSpin = false;
+
+        /* Controla si el personaje puede rebotar */
+        this.canBounce = true;
     }
 
     get sprite() { return this.player; }
@@ -112,6 +116,10 @@ class Player {
 
     get spin() { return this._spin; }
 
+    /**
+     * Retorna true si el jugador esta girando
+     */
+    get spinning() { return this.spin.spinning; }
 
     /**
      * Voltea sprite del jugador.
@@ -209,6 +217,8 @@ class Player {
 
     goingRight() { return !this.goingLeft(); }
 
+    goingUp() { return this.velocity.y < 0; }
+
     touchingDown() { return this.body.touching.down; }
 
     /**
@@ -260,6 +270,16 @@ class Player {
         };
     };
 
+    /**
+     * Genera un manejador de colision con plataformas.
+     * 
+     */
+    wallHandler() {
+        return (_, __) => {
+            this.resetRotation();
+        };
+    };
+
 
     /**
      * Establece la funcion a ejecutar cuando el jugador muere.
@@ -271,7 +291,7 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        console.log("canSpin: ", this.canSpin);
+        console.log("canSpin: ", this.canSpin, " canBounce: ", this.canBounce);
 
         if (this.standed && this.touchingDown()) {
             if (this.checkLeftPress()) { return this.walkLeft(); }
@@ -328,6 +348,13 @@ class Player {
         setTimeout(() => this.canSpin = true, SPIN_TIMEOUT_MS);
     }
 
+
+    bounce() {
+        this.setVelocityY(BOUNCE_POWER);
+        this.setVelocityX(this.velocity.x * -1);
+        this.canBounce = false;
+    }
+
     rotateLeftMidair() {
         TEMP.angularAccel = Math.abs(this.initialAngularVelocity) * -1;
         return this.setAngularAcceleration(TEMP.angularAccel);
@@ -341,7 +368,12 @@ class Player {
     doSpin() {
         if (this.canSpin) {
             this.canSpin = false;
-            this.spin.playAnim({ completeCb: () => this.canSpin = true });
+            this.spin.playAnim({
+                completeCb: () => {
+                    this.canSpin = true;
+                    this.canBounce = true;
+                }
+            });
 
             const self = this;
             this.scene.tweens.add({

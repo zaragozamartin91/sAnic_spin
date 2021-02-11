@@ -4,5 +4,5 @@ package-lock.json
 platforms/
 plugins/
 
-www/js/main.js
+js/main.js
 

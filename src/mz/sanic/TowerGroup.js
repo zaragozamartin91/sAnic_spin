@@ -10,7 +10,7 @@ class TowerGroup extends BaseGroup {
      * Crea una plataforma y la agrega al grupo de torres existentes.
      * @param {Number} x Posicion x
      * @param {Number} y Posicion y
-     * @param {Number} scale Escala de la plataforma. Valor por defecto = 1.
+     * @param {{scaleX:number,scaleY:number}} scale Escala en los ejes x e y.
      * @returns {TowerGroup} this.
      */
     create(x, y, { scaleX, scaleY } = { scaleX: 1, scaleY: 1 }) {

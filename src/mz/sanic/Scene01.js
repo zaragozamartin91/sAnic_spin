@@ -53,13 +53,17 @@ class Scene01 extends BaseScene {
         this.debugText.init(0, 32, '');
 
         this.platforms.init()
-            .create(400, 1068, 2)
             .create(600, 900)
-            .create(50, 750)
-            .create(750, 720);
+            .create(600, 700);
 
-        this.towers.init();
-        this.towers.create(1400, 720);
+        this.towers.init()
+            .create(1400, 720)
+            .create(400, 1068, {scaleX: 3.5, scaleY: 1});
+
+        this.walls.init()
+            .create(275, 775, {scaleY: 0.5})
+
+            ;
 
         this.bombs = this.physics.add.group();
 
@@ -112,8 +116,10 @@ class Scene01 extends BaseScene {
         If that occurs it can then optionally invoke your own callback, but for the sake of just colliding with platforms we don't require that */
         this.physics.add.collider(this.player.sprite, this.platforms.group, this.player.platformHandler());
         this.physics.add.collider(this.player.sprite, this.towers.group, this.player.platformHandler());
+        this.physics.add.collider(this.player.sprite, this.walls.group, this.player.wallHandler());
 
         this.physics.add.collider(this.stars, this.platforms.group);
+        this.physics.add.collider(this.stars, this.towers.group);
 
 
         //This tells Phaser to check for an overlap between the player and any star in the stars Group
@@ -148,6 +154,12 @@ class Scene01 extends BaseScene {
         this.physics.add.overlap(this.platforms.group, this.spin.sprite, (p, s) => {
             text = p.y < s.y ? 'bounce up' : 'bounce down';
             this.debugText.setText(text);
+        });
+
+        this.physics.add.overlap(this.walls.group, this.player.spin, (w, s) => {
+            if(this.player.canBounce && this.player.goingUp()) {
+                this.player.bounce();
+            }
         });
 
         window.spin = this.spin;

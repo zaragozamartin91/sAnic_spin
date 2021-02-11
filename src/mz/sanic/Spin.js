@@ -1,9 +1,15 @@
+import Player from './Player'
+
 const SPIN_DURATION_MS = 500;
 const HALF_SPIN_DURATION_MS = SPIN_DURATION_MS / 2;
 
 const EMPTY_FN = () => { };
 
 class Spin {
+    /**
+     * Construye un SPIN o giro de jugador ante un doble-salto
+     * @param {Phaser.Scene} scene Escena del juego
+     */
     constructor(scene) {
         this.scene = scene;
         this.__duration = SPIN_DURATION_MS;

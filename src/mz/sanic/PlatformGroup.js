@@ -8,14 +8,15 @@ class PlatformGroup extends BaseGroup {
      * Crea una plataforma y la agrega al grupo de plataformas existentes.
      * @param {Number} x Posicion x
      * @param {Number} y Posicion y
-     * @param {Number} scale Escala de la plataforma. Valor por defecto = 1.
+     * @param {{scaleX:number,scaleY:number}} scale Escala en los ejes x e y.
      * @returns {PlatformGroup} this.
      */
-    create(x, y, scale = 1) {
+    create(x, y, { scaleX, scaleY } = { scaleX: 1, scaleY: 1 }) {
         /* we scale this platform x2 with the function setScale(2) */
         /* The call to refreshBody() is required because we have scaled a static physics body, so we have to tell the physics world about the changes we made */
-        if (scale == 1) { this.legroup.create(x, y, 'ground'); }
-        else { this.legroup.create(x, y, 'ground').setScale(scale).refreshBody(); }
+        const vsx = scaleX || 1;
+        const vsy = scaleY || 1;
+        this.legroup.create(x, y, 'ground').setScale(vsx, vsy).refreshBody();
         return this;
     }
 }
