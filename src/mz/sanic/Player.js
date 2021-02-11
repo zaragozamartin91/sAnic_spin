@@ -297,7 +297,7 @@ class Player {
             if (this.checkLeftPress()) { return this.walkLeft(); }
             if (this.checkRightPress()) { return this.walkRight(); }
 
-            // si no presiono ningun boton...
+            // si no presiono ningun boton y el personaje se esta moviendo lento...
             if (Math.abs(this.velocity.x) < HALF_ACCEL) {
                 this.playAnim('stand', true);
                 this.setAccelerationX(0);
@@ -309,15 +309,15 @@ class Player {
             return this.setAccelerationX(this.goingLeft() ? ACCEL : -ACCEL);
         }
 
+        // en el aire...
         if (!this.touchingDown()) {
             this.setAccelerationX(0);
             this.playAnim('jump');
 
             if (this.checkJumpPress()) { return this.doSpin(); }
 
-            // if (this.checkLeftPress()) { return this.rotateLeftMidair(); }
-            // if (this.checkRightPress()) { return this.rotateRightMidair(); }
-            // return this.setAngularAcceleration(0);
+            if (this.checkLeftPress()) { return this.floatLeft(); }
+            if (this.checkRightPress()) { return this.floatRight(); }
         }
     }
 
@@ -329,6 +329,8 @@ class Player {
 
     moveLeft() { this.setAccelerationX(this.goingRight() ? NEG_TRIPLE_ACCEL : NEG_ACCEL); }
 
+    floatLeft() { this.setAccelerationX(NEG_ACCEL); }
+
     walkRight() {
         this.moveRight();
         this.flipX = false;
@@ -336,6 +338,8 @@ class Player {
     }
 
     moveRight() { this.setAccelerationX(this.goingLeft() ? TRIPLE_ACCEL : ACCEL); }
+
+    floatRight() { this.setAccelerationX(ACCEL); }
 
     jump() {
         this.setVelocityY(JUMP_POWER);
