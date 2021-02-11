@@ -14,6 +14,7 @@ const NEG_TRIPLE_ACCEL = -TRIPLE_ACCEL;
 const RAW_JUMP_POWER = 500;
 const JUMP_POWER = -RAW_JUMP_POWER;
 const BOUNCE_POWER = JUMP_POWER * 0.75
+const NEG_BOUNCE_POWER = -BOUNCE_POWER
 
 const SPIN_TIMEOUT_MS = 200;
 
@@ -356,6 +357,17 @@ class Player {
     bounce() {
         this.setVelocityY(BOUNCE_POWER);
         this.setVelocityX(this.velocity.x * -1);
+        this.canBounce = false;
+    }
+
+    /**
+     * Hace rebotar al personaje contra un enemigo
+     * @param {number} enemyX Posicion enemigo X
+     * @param {number} enemyY Posicion enemigo Y
+     */
+    bounceOffEnemy(enemyY) {
+        const bp = this.y < enemyY ? BOUNCE_POWER : NEG_BOUNCE_POWER;
+        this.setVelocityY(bp)
         this.canBounce = false;
     }
 

@@ -1,3 +1,5 @@
+// @ts-check
+
 import Phaser from 'phaser';
 import Preloader from './Preloader';
 import Background from './Background';
@@ -10,6 +12,7 @@ import BaseScene from './BaseScene';
 import PlatformGroup from './PlatformGroup';
 import WallGroup from './WallGroup';
 import TowerGroup from './TowerGroup';
+import StaticEnemy from './StaticEnemy'
 
 
 class Scene01 extends BaseScene {
@@ -34,6 +37,8 @@ class Scene01 extends BaseScene {
         this.spin = new Spin(this.gameScene);
 
         this.towers = new TowerGroup(this.gameScene);
+
+        this.wasp = new StaticEnemy(this.gameScene, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
     }
 
 
@@ -58,10 +63,10 @@ class Scene01 extends BaseScene {
 
         this.towers.init()
             .create(1400, 720)
-            .create(400, 1068, {scaleX: 3.5, scaleY: 1});
+            .create(400, 1068, { scaleX: 3.5, scaleY: 1 });
 
         this.walls.init()
-            .create(275, 775, {scaleY: 0.5})
+            .create(275, 775, { scaleX:1, scaleY: 0.5 })
 
             ;
 
@@ -74,6 +79,9 @@ class Scene01 extends BaseScene {
 
         this.explosion.init(100, 950);
         this.explosion.disableBody(true, true);
+
+        this.wasp.init(1000, 650)
+        this.wasp.playAnim()
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
@@ -143,11 +151,23 @@ class Scene01 extends BaseScene {
             }
         });
 
+
         this.physics.add.collider(this.bombs, this.platforms.group);
 
         this.physics.add.collider(this.player.sprite, this.bombs, (p, _) => {
             this.explosion.explode(this.player.x, this.player.y);
             this.player.die();
+        });
+
+        this.physics.add.collider(this.player.sprite, this.wasp.sprite, (p, _) => {
+            this.explosion.explode(this.player.x, this.player.y);
+            this.player.die();
+        });
+
+        this.physics.add.collider(this.spin.sprite, this.wasp.sprite, (p, _) => {
+            this.explosion.explode(this.wasp.x, this.wasp.y);
+            this.player.bounceOffEnemy(this.wasp.y)
+            this.wasp.die();
         });
 
         let text = '';
@@ -157,7 +177,7 @@ class Scene01 extends BaseScene {
         });
 
         this.physics.add.overlap(this.walls.group, this.player.spin, (w, s) => {
-            if(this.player.canBounce && this.player.goingUp()) {
+            if (this.player.canBounce && this.player.goingUp()) {
                 this.player.bounce();
             }
         });

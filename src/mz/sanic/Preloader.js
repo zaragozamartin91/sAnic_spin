@@ -28,6 +28,9 @@ class Preloader {
             this.scene.load.image('spin', 'assets/circle.png');
 
             this.scene.load.image('tower', 'assets/tower.jpg');
+
+            // cargamos la imagen del enemigo
+            this.scene.load.multiatlas('wasp', 'assets/wasp.json', 'assets');
         });
     }
 }
