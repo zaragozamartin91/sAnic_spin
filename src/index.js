@@ -37,6 +37,12 @@ function startGame() {
             default: 'arcade',
             arcade: { gravity: { y: GRAVITY_VAL }, debug: true }
         },
+        scale: {
+            mode: Phaser.Scale.FIT,
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+            parent: "main"
+        },
+        pixelArt: true
     };
 
     let game = new Phaser.Game(config);
