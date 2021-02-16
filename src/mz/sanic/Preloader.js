@@ -31,6 +31,10 @@ class Preloader {
 
             // cargamos la imagen del enemigo
             this.scene.load.multiatlas('wasp', 'assets/wasp.json', 'assets');
+
+            // cargamos los tiles del map
+            this.scene.load.image('main_map', 'assets/main_map_tiles.png')
+            this.scene.load.tilemapTiledJSON('main_map','assets/main_map.json')
         });
     }
 }

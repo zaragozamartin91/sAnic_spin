@@ -1,3 +1,5 @@
+// @ts-check
+
 import AssetLoader from './AssetLoader';
 
 const MAX_SPEED_X = 300;
@@ -222,6 +224,8 @@ class Player {
 
     touchingDown() { return this.body.touching.down; }
 
+    blockedDown() { return this.body.blocked.down }
+
     /**
      * Marca al jugador como muerto
      */
@@ -245,27 +249,13 @@ class Player {
      * 
      */
     platformHandler() {
-        return (_, __) => {
+        return (_selfSprite, _platformSprite) => {
             this.canSpin = false;
-
-            //TEMP.angle = Math.abs(this.angle) % 360;
-            TEMP.mustDie = Math.abs(this.velocity.y) >= MAX_SPEED_Y
-            //TEMP.mustDie = TEMP.angle > ANGLE_THRESHOLD && this.touchingDown();
-            TEMP.landSuccess = this.jumped;
-            //TEMP.landSuccess = this.jumped && TEMP.angle <= ANGLE_THRESHOLD && this.touchingDown();
-
-            if (TEMP.mustDie) {
-                return this.onLandFail();
-            }
-
-            if (TEMP.landSuccess) {
-                this.onLandSuccess();
-            }
 
             /* Verifico si el jugador debe saltar */
             this.jumped = false;
             this.resetRotation();
-            if (this.checkJumpPress()) { return this.jump(); }
+            if (this.checkJumpPress() && this.blockedDown()) { return this.jump(); }
 
             this.standed = true;
         };
@@ -292,9 +282,9 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        console.log("canSpin: ", this.canSpin, " canBounce: ", this.canBounce);
+        console.log("this.standed: ", this.standed, "this.blockedDown(): ",this.blockedDown(), " canSpin: ", this.canSpin, " canBounce: ", this.canBounce);
 
-        if (this.standed && this.touchingDown()) {
+        if (this.standed && this.blockedDown()) {
             if (this.checkLeftPress()) { return this.walkLeft(); }
             if (this.checkRightPress()) { return this.walkRight(); }
 
@@ -311,7 +301,7 @@ class Player {
         }
 
         // en el aire...
-        if (!this.touchingDown()) {
+        if (!this.blockedDown()) {
             this.setAccelerationX(0);
             this.playAnim('jump');
 

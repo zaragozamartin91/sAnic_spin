@@ -50,25 +50,29 @@ class Scene01 extends BaseScene {
     create() {
         console.log("CREATE");
 
-        // window.addEventListener('resize', resize);
-        // resize();
 
         this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
         this.scoreText.init(0, 0, 'Score: 0');
         this.debugText.init(0, 32, '');
 
-        this.platforms.init()
-            .create(600, 900)
-            .create(600, 700);
+        const map = this.gameScene.make.tilemap({ key: 'main_map' })
+        const tileset = map.addTilesetImage('main_map', 'main_map')
+        const worldLayer = map.createLayer('world', tileset, 0, 0)
+        worldLayer.setCollisionByProperty({stand: true, bounce:true})
 
-        this.towers.init()
-            .create(1400, 720)
-            .create(400, 1068, { scaleX: 3.5, scaleY: 1 });
+        const debugGraphics = this.gameScene.add.graphics().setAlpha(0.5)
+        worldLayer.renderDebug(debugGraphics, {
+            tileColor: null,
+            collidingTileColor: new Phaser.Display.Color(255,255,50,255),
+            faceColor: new Phaser.Display.Color(0,255,0,255)
+        })
 
-        this.walls.init()
-            .create(275, 775, { scaleX:1, scaleY: 0.5 })
 
-            ;
+        this.platforms.init();
+
+        this.towers.init();
+
+        this.walls.init();
 
         this.bombs = this.physics.add.group();
 
@@ -80,13 +84,13 @@ class Scene01 extends BaseScene {
         this.explosion.init(100, 950);
         this.explosion.disableBody(true, true);
 
-        this.wasp.init(1000, 650)
+        this.wasp.init(750, 1000)
         this.wasp.playAnim()
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
 
-        this.player.init(100, 950);
+        this.player.init(100, 1000);
         this.player.spin = this.spin;
         this.player.setInputManager({
             checkJumpPress: () => this.checkJumpPress(),
@@ -125,9 +129,13 @@ class Scene01 extends BaseScene {
         this.physics.add.collider(this.player.sprite, this.platforms.group, this.player.platformHandler());
         this.physics.add.collider(this.player.sprite, this.towers.group, this.player.platformHandler());
         this.physics.add.collider(this.player.sprite, this.walls.group, this.player.wallHandler());
+        
+        this.physics.add.collider(this.player.sprite, worldLayer, this.player.platformHandler())
 
         this.physics.add.collider(this.stars, this.platforms.group);
         this.physics.add.collider(this.stars, this.towers.group);
+        this.physics.add.collider(this.stars, worldLayer);
+        this.physics.add.collider(this.stars, worldLayer);
 
 
         //This tells Phaser to check for an overlap between the player and any star in the stars Group
@@ -176,13 +184,11 @@ class Scene01 extends BaseScene {
             this.debugText.setText(text);
         });
 
-        this.physics.add.overlap(this.walls.group, this.player.spin, (w, s) => {
-            if (this.player.canBounce && this.player.goingUp()) {
+        this.physics.add.overlap(worldLayer, this.player.spin, (_w, tile) => {
+            if (tile.properties.bounce && this.player.canBounce && this.player.goingUp()) {
                 this.player.bounce();
             }
         });
-
-        window.spin = this.spin;
 
         /* MANEJO DE CAMARA ----------------------------------------------------------------------------------------------------------- */
 
