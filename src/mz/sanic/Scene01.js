@@ -5,13 +5,9 @@ import Preloader from './Preloader';
 import Background from './Background';
 import Player from './Player';
 import GameText from './GameText';
-import Sparkle from './Sparkle';
 import Explosion from './Explosion';
 import Spin from './Spin';
 import BaseScene from './BaseScene';
-import PlatformGroup from './PlatformGroup';
-import WallGroup from './WallGroup';
-import TowerGroup from './TowerGroup';
 import StaticEnemy from './StaticEnemy'
 
 
@@ -22,11 +18,7 @@ class Scene01 extends BaseScene {
         this.preloader = new Preloader(this.gameScene);
 
         this.player = new Player(this.gameScene); // objeto del heroe
-        this.sparkle = new Sparkle(this.gameScene); // objeto brillo o sparkle
         this.explosion = new Explosion(this.gameScene); // explosion
-
-        this.platforms = new PlatformGroup(this.gameScene);
-        this.walls = new WallGroup(this.gameScene);
 
         this.score = 0;
         this.scoreText = new GameText(this.gameScene);
@@ -35,8 +27,6 @@ class Scene01 extends BaseScene {
         this.bg = new Background(this.gameScene);
 
         this.spin = new Spin(this.gameScene);
-
-        this.towers = new TowerGroup(this.gameScene);
 
         this.wasp = new StaticEnemy(this.gameScene, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
     }
@@ -67,24 +57,14 @@ class Scene01 extends BaseScene {
             faceColor: new Phaser.Display.Color(0,255,0,255)
         })
 
-
-        this.platforms.init();
-
-        this.towers.init();
-
-        this.walls.init();
-
         this.bombs = this.physics.add.group();
-
-        this.sparkle.init();
-        this.sparkle.disableBody(true, true);
 
         this.spin.init(this.player);
 
         this.explosion.init(100, 950);
         this.explosion.disableBody(true, true);
 
-        this.wasp.init(750, 1000)
+        this.wasp.init(750, 1100)
         this.wasp.playAnim()
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
@@ -125,16 +105,9 @@ class Scene01 extends BaseScene {
 
         /* In order to allow the player to collide with the platforms we can create a Collider object. 
         This object monitors two physics objects (which can include Groups) and checks for collisions or overlap between them. 
-        If that occurs it can then optionally invoke your own callback, but for the sake of just colliding with platforms we don't require that */
-        this.physics.add.collider(this.player.sprite, this.platforms.group, this.player.platformHandler());
-        this.physics.add.collider(this.player.sprite, this.towers.group, this.player.platformHandler());
-        this.physics.add.collider(this.player.sprite, this.walls.group, this.player.wallHandler());
-        
+        If that occurs it can then optionally invoke your own callback, but for the sake of just colliding with platforms we don't require that */        
         this.physics.add.collider(this.player.sprite, worldLayer, this.player.platformHandler())
 
-        this.physics.add.collider(this.stars, this.platforms.group);
-        this.physics.add.collider(this.stars, this.towers.group);
-        this.physics.add.collider(this.stars, worldLayer);
         this.physics.add.collider(this.stars, worldLayer);
 
 
@@ -160,7 +133,7 @@ class Scene01 extends BaseScene {
         });
 
 
-        this.physics.add.collider(this.bombs, this.platforms.group);
+        this.physics.add.collider(this.bombs, worldLayer);
 
         this.physics.add.collider(this.player.sprite, this.bombs, (p, _) => {
             this.explosion.explode(this.player.x, this.player.y);
@@ -178,11 +151,6 @@ class Scene01 extends BaseScene {
             this.wasp.die();
         });
 
-        let text = '';
-        this.physics.add.overlap(this.platforms.group, this.spin.sprite, (p, s) => {
-            text = p.y < s.y ? 'bounce up' : 'bounce down';
-            this.debugText.setText(text);
-        });
 
         this.physics.add.overlap(worldLayer, this.player.spin, (_w, tile) => {
             if (tile.properties.bounce && this.player.canBounce && this.player.goingUp()) {
@@ -204,6 +172,7 @@ class Scene01 extends BaseScene {
         this.player.update();
         this.spin.update();
         this.bg.update(this.player.body.velocity.x, this.player.body.velocity.y);
+        this.debugText.setText(`X: ${Math.round(this.player.x)} ; Y: ${Math.round(this.player.y)}`)
     }
 }
 

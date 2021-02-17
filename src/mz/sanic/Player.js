@@ -6,14 +6,16 @@ const MAX_SPEED_X = 300;
 const MAX_SPEED_Y = 2000;
 
 /* Aceleracion del jugador mientras camina */
-const ACCEL = MAX_SPEED_X * 0.75;
+const ACCEL = MAX_SPEED_X * 0.85;
 const HALF_ACCEL = ACCEL * 0.5;
+const DOUBLE_ACCEL = ACCEL * 3;
 const TRIPLE_ACCEL = ACCEL * 3;
 
 const NEG_ACCEL = -ACCEL;
+const NEG_DOUBLE_ACCEL = -DOUBLE_ACCEL;
 const NEG_TRIPLE_ACCEL = -TRIPLE_ACCEL;
 
-const RAW_JUMP_POWER = 500;
+const RAW_JUMP_POWER = 450;
 const JUMP_POWER = -RAW_JUMP_POWER;
 const BOUNCE_POWER = JUMP_POWER * 0.75
 const NEG_BOUNCE_POWER = -BOUNCE_POWER
@@ -345,14 +347,14 @@ class Player {
 
 
     bounce() {
-        this.setVelocityY(BOUNCE_POWER);
+        const bounceFactor = Math.abs(this.velocity.x) / MAX_SPEED_X
+        this.setVelocityY(BOUNCE_POWER * bounceFactor);
         this.setVelocityX(this.velocity.x * -1);
         this.canBounce = false;
     }
 
     /**
      * Hace rebotar al personaje contra un enemigo
-     * @param {number} enemyX Posicion enemigo X
      * @param {number} enemyY Posicion enemigo Y
      */
     bounceOffEnemy(enemyY) {
