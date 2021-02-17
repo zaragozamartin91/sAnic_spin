@@ -253,13 +253,7 @@ class Player {
     platformHandler() {
         return (_selfSprite, _platformSprite) => {
             this.canSpin = false;
-
-            /* Verifico si el jugador debe saltar */
-            this.jumped = false;
             this.resetRotation();
-            if (this.checkJumpPress() && this.blockedDown()) { return this.jump(); }
-
-            this.standed = true;
         };
     };
 
@@ -284,31 +278,31 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        console.log("this.standed: ", this.standed, "this.blockedDown(): ",this.blockedDown(), " canSpin: ", this.canSpin, " canBounce: ", this.canBounce);
+        console.log("this.blockedDown(): ", this.blockedDown(), " canSpin: ", this.canSpin, " canBounce: ", this.canBounce);
 
-        if (this.standed && this.blockedDown()) {
-            if (this.checkLeftPress()) { return this.walkLeft(); }
-            if (this.checkRightPress()) { return this.walkRight(); }
+        if (this.blockedDown()) {
+            // en el piso
+            if (this.checkJumpPress()) { return this.jump() }
+            if (this.checkLeftPress()) { return this.walkLeft() }
+            if (this.checkRightPress()) { return this.walkRight() }
+            
 
             // si no presiono ningun boton y el personaje se esta moviendo lento...
             if (Math.abs(this.velocity.x) < HALF_ACCEL) {
-                this.playAnim('stand', true);
-                this.setAccelerationX(0);
-                this.setVelocityX(0);
-                return;
+                this.playAnim('stand', true)
+                this.setAccelerationX(0)
+                this.setVelocityX(0)
+                return
             }
 
-            this.playAnim(this.goingLeft() ? 'left' : 'right', true);
-            return this.setAccelerationX(this.goingLeft() ? ACCEL : -ACCEL);
-        }
-
-        // en el aire...
-        if (!this.blockedDown()) {
+            this.playAnim(this.goingLeft() ? 'left' : 'right', true)
+            return this.setAccelerationX(this.goingLeft() ? ACCEL : NEG_ACCEL)
+        } else {
+            // en el aire
             this.setAccelerationX(0);
             this.playAnim('jump');
 
             if (this.checkJumpPress()) { return this.doSpin(); }
-
             if (this.checkLeftPress()) { return this.floatLeft(); }
             if (this.checkRightPress()) { return this.floatRight(); }
         }
@@ -339,8 +333,6 @@ class Player {
         this.playAnim('jump', true);
         this.initialAngularVelocity = this.velocity.x;
         this.setAngularVelocity(this.initialAngularVelocity);
-        this.jumped = true;
-        this.standed = false;
 
         setTimeout(() => this.canSpin = true, SPIN_TIMEOUT_MS);
     }
