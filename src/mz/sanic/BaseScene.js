@@ -41,7 +41,16 @@ class BaseScene {
     }
 
     checkJumpPress() {
-        return this.cursors.up.isDown || (this.pointer1.isDown && this.pointer1.y < this.half_worldHeight);
+        let duration = -1
+        let pressed = false
+        if (this.cursors.up.isDown) {
+            duration = this.cursors.up.getDuration()
+            pressed = this.cursors.up.isDown
+        } else if (this.pointer1.isDown && this.pointer1.y < this.half_worldHeight) {
+            duration = this.pointer1.getDuration()
+            pressed = this.pointer1.isDown
+        }
+        return { duration, pressed }
     }
 
     preload() { throw new Error('Not implemented') }

@@ -89,6 +89,10 @@ class Player {
 
         /* Controla si el personaje puede rebotar */
         this.canBounce = true;
+
+        /* Informacion del salto */
+        this.jumpData = { duration: -1, pressed: false }
+        this.triggerJump = false
     }
 
     get sprite() { return this.player; }
@@ -278,14 +282,24 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        console.log("this.blockedDown(): ", this.blockedDown(), " canSpin: ", this.canSpin, " canBounce: ", this.canBounce);
+        this.jumpData = this.checkJumpPress()
+        console.log("this.blockedDown(): ", this.blockedDown(), " canSpin: ", this.canSpin, " canBounce: ", this.canBounce, ' this.jumpData: ', this.jumpData);
 
         if (this.blockedDown()) {
             // en el piso
-            if (this.checkJumpPress()) { return this.jump() }
+            if (this.jumpData.pressed) { // boton de salto presionado
+                this.triggerJump = true
+                if (this.jumpData.duration > 50) { // boton de salto presionado mucho tiempo
+                    this.triggerJump = false
+                    return this.jump() // salto normal
+                }
+            } else if(this.triggerJump) { // boton de salto fue soltado
+                this.triggerJump = false
+                return this.jump(0.75) // saltamos bajito
+            }
             if (this.checkLeftPress()) { return this.walkLeft() }
             if (this.checkRightPress()) { return this.walkRight() }
-            
+
 
             // si no presiono ningun boton y el personaje se esta moviendo lento...
             if (Math.abs(this.velocity.x) < HALF_ACCEL) {
@@ -302,7 +316,7 @@ class Player {
             this.setAccelerationX(0);
             this.playAnim('jump');
 
-            if (this.checkJumpPress()) { return this.doSpin(); }
+            if (this.jumpData.pressed) { return this.doSpin(); }
             if (this.checkLeftPress()) { return this.floatLeft(); }
             if (this.checkRightPress()) { return this.floatRight(); }
         }
@@ -328,8 +342,8 @@ class Player {
 
     floatRight() { this.setAccelerationX(ACCEL); }
 
-    jump() {
-        this.setVelocityY(JUMP_POWER);
+    jump(perc = 1.0) {
+        this.setVelocityY(JUMP_POWER * perc);
         this.playAnim('jump', true);
         this.initialAngularVelocity = this.velocity.x;
         this.setAngularVelocity(this.initialAngularVelocity);
