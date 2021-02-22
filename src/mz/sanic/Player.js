@@ -2,7 +2,7 @@
 
 import AssetLoader from './AssetLoader';
 
-const MAX_SPEED_X = 300;
+const MAX_SPEED_X = 400;
 const MAX_SPEED_Y = 2000;
 
 /* Aceleracion del jugador mientras camina */
@@ -15,7 +15,7 @@ const NEG_ACCEL = -ACCEL;
 const NEG_DOUBLE_ACCEL = -DOUBLE_ACCEL;
 const NEG_TRIPLE_ACCEL = -TRIPLE_ACCEL;
 
-const RAW_JUMP_POWER = 600;
+const RAW_JUMP_POWER = 700;
 const JUMP_POWER = -RAW_JUMP_POWER;
 const BOUNCE_POWER = JUMP_POWER * 0.75
 const NEG_BOUNCE_POWER = -BOUNCE_POWER

@@ -64,7 +64,7 @@ class Scene01 extends BaseScene {
         this.explosion.init(100, 950);
         this.explosion.disableBody(true, true);
 
-        this.wasp.init(750, 1100)
+        this.wasp.init(1000, 2900)
         this.wasp.playAnim()
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
