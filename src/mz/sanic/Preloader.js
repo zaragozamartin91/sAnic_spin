@@ -31,6 +31,9 @@ class Preloader {
             // cargamos los tiles del map
             this.scene.load.image('main_map', 'assets/main_map_tiles.png')
             this.scene.load.tilemapTiledJSON('main_map','assets/main_map.json')
+
+            this.scene.load.image('factory_map', 'assets/factory_tiles.png')
+            this.scene.load.tilemapTiledJSON('factory_map','assets/factory_map.json')
         });
     }
 }

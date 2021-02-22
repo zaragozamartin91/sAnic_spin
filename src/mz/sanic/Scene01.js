@@ -9,26 +9,30 @@ import Explosion from './Explosion';
 import Spin from './Spin';
 import BaseScene from './BaseScene';
 import StaticEnemy from './StaticEnemy'
+import Tileset from './Tileset'
 
+const PLAYER_START_POS = {x: 100, y: 3000}
 
 class Scene01 extends BaseScene {
     constructor(worldWidth, worldHeight) {
         super(worldWidth, worldHeight)
 
-        this.preloader = new Preloader(this.gameScene);
+        this.preloader = new Preloader(this.gameScene)
 
-        this.player = new Player(this.gameScene); // objeto del heroe
-        this.explosion = new Explosion(this.gameScene); // explosion
+        this.player = new Player(this.gameScene) // objeto del heroe
+        this.explosion = new Explosion(this.gameScene) // explosion
 
-        this.score = 0;
-        this.scoreText = new GameText(this.gameScene);
-        this.debugText = new GameText(this.gameScene);
+        this.score = 0
+        this.scoreText = new GameText(this.gameScene)
+        this.debugText = new GameText(this.gameScene)
 
-        this.bg = new Background(this.gameScene);
+        this.bg = new Background(this.gameScene)
 
-        this.spin = new Spin(this.gameScene);
+        this.spin = new Spin(this.gameScene)
 
         this.wasp = new StaticEnemy(this.gameScene, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
+
+        this.tileset = new Tileset(this.gameScene)
     }
 
 
@@ -45,17 +49,13 @@ class Scene01 extends BaseScene {
         this.scoreText.init(0, 0, 'Score: 0');
         this.debugText.init(0, 32, '');
 
-        const map = this.gameScene.make.tilemap({ key: 'main_map' })
-        const tileset = map.addTilesetImage('main_map', 'main_map')
-        const worldLayer = map.createLayer('world', tileset, 0, 0)
-        worldLayer.setCollisionByProperty({stand: true, bounce:true})
-
-        const debugGraphics = this.gameScene.add.graphics().setAlpha(0.5)
-        worldLayer.renderDebug(debugGraphics, {
-            tileColor: null,
-            collidingTileColor: new Phaser.Display.Color(255,255,50,255),
-            faceColor: new Phaser.Display.Color(0,255,0,255)
-        })
+        this.tileset
+            .init('factory_map', 'factory_tiles')
+            .createLayer('world')
+            .createLayer('back')
+            .setCollisionByProperty('world', { stand: true, bounce: true })
+            .renderDebug('world')
+        const worldLayer = this.tileset.getLayer('world')
 
         this.bombs = this.physics.add.group();
 
@@ -70,7 +70,7 @@ class Scene01 extends BaseScene {
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
 
-        this.player.init(100, 1000);
+        this.player.init(PLAYER_START_POS.x, PLAYER_START_POS.y)
         this.player.spin = this.spin;
         this.player.setInputManager({
             checkJumpPress: () => this.checkJumpPress(),
@@ -96,7 +96,7 @@ class Scene01 extends BaseScene {
         this.stars = this.physics.add.group({
             key: 'star', //texture key to be the star image by default
             repeat: 6, //Because it creates 1 child automatically, repeating 11 times means we'll get 12 in total
-            setXY: { x: 12, y: 500, stepX: 70 } //this is used to set the position of the 12 children the Group creates. Each child will be placed starting at x: 12, y: 0 and with an x step of 70
+            setXY: { x: 12, y: PLAYER_START_POS.y, stepX: 70 } //this is used to set the position of the 12 children the Group creates. Each child will be placed starting at x: 12, y: 0 and with an x step of 70
         });
 
         this.stars.children.iterate(function (child) { child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)); });
@@ -105,7 +105,7 @@ class Scene01 extends BaseScene {
 
         /* In order to allow the player to collide with the platforms we can create a Collider object. 
         This object monitors two physics objects (which can include Groups) and checks for collisions or overlap between them. 
-        If that occurs it can then optionally invoke your own callback, but for the sake of just colliding with platforms we don't require that */        
+        If that occurs it can then optionally invoke your own callback, but for the sake of just colliding with platforms we don't require that */
         this.physics.add.collider(this.player.sprite, worldLayer, this.player.platformHandler())
 
         this.physics.add.collider(this.stars, worldLayer);
@@ -125,7 +125,7 @@ class Scene01 extends BaseScene {
                 this.stars.children.iterate(child => child.enableBody(true, child.x, 0, true, true));
                 let x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
 
-                let bomb = this.bombs.create(x, 516, 'bomb');
+                let bomb = this.bombs.create(x, PLAYER_START_POS.y, 'bomb');
                 bomb.setBounce(1);
                 bomb.setCollideWorldBounds(false);
                 bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
