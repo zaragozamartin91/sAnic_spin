@@ -44,10 +44,12 @@ class Scene01 extends BaseScene {
     create() {
         console.log("CREATE");
 
+        super.create()
 
-        this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
         this.scoreText.init(0, 0, 'Score: 0');
         this.debugText.init(0, 32, '');
+        this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
+        
 
         this.tileset
             .init('factory_map', 'factory_tiles')
@@ -172,7 +174,8 @@ class Scene01 extends BaseScene {
         this.player.update();
         this.spin.update();
         this.bg.update(this.player.body.velocity.x, this.player.body.velocity.y);
-        this.debugText.setText(`X: ${Math.round(this.player.x)} ; Y: ${Math.round(this.player.y)}`)
+        this.debugText.setText(`X: ${Math.round(this.player.x)} ; Y: ${Math.round(this.player.y)}, 
+p1x: ${Math.round(this.input.pointer1.x)} ; p2x: ${Math.round(this.input.pointer2.x)}`)
     }
 }
 

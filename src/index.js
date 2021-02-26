@@ -42,8 +42,13 @@ function startGame() {
             autoCenter: Phaser.Scale.CENTER_BOTH,
             parent: "main"
         },
+        input: {
+            activePointers: 4
+        },
         pixelArt: true
     };
 
     let game = new Phaser.Game(config);
+    console.log("pointers: ", game.input.pointers.length); // 2
+
 }

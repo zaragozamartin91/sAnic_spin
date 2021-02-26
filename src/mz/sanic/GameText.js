@@ -12,6 +12,7 @@ class GameText {
         this.text = this.scene.add.text(x, y, value, cfg);
         this.text.scrollFactorX = 0;
         this.text.scrollFactorY = 0;
+        this.text.setDepth(1)
     }
 
     setText(value) { this.text.setText(value); }

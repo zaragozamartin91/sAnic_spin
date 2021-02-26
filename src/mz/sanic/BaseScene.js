@@ -1,5 +1,7 @@
-import Phaser from 'phaser';
+// @ts-check
 
+import Phaser from 'phaser';
+import ActionButton from './ActionButton'
 
 class BaseScene {
     constructor(worldWidth, worldHeight) {
@@ -10,6 +12,11 @@ class BaseScene {
 
         // create a new scene named "Game"
         this.gameScene = new Phaser.Scene('Scene01');
+
+        this.leftButton = new ActionButton(this.gameScene, 'left_btn')
+        this.rightButton = new ActionButton(this.gameScene, 'right_btn')
+        this.aButton = new ActionButton(this.gameScene, 'a_btn')
+        this.bButton = new ActionButton(this.gameScene, 'b_btn')
     }
 
     get input() { return this.gameScene.input; }
@@ -33,20 +40,48 @@ class BaseScene {
     get scene() { return this.gameScene.scene; }
 
     checkLeftPress() {
-        return this.cursors.left.isDown || (this.pointer1.isDown && this.pointer1.x <= this.half_worldWidth);
+        return this.cursors.left.isDown || this.leftPress
+        // return this.cursors.left.isDown || (this.pointer1.isDown && this.pointer1.x <= this.half_worldWidth)
     }
 
     checkRightPress() {
-        return this.cursors.right.isDown || (this.pointer1.isDown && this.pointer1.x > this.half_worldWidth);
+        return this.cursors.right.isDown || this.rightPress
+        // return this.cursors.right.isDown || (this.pointer1.isDown && this.pointer1.x > this.half_worldWidth)
     }
 
     checkJumpPress() {
-        return this.cursors.up.isDown || (this.pointer1.isDown && this.pointer1.y < this.half_worldHeight);
+        return this.cursors.up.isDown || this.jumpPress
+        // return this.cursors.up.isDown || (this.pointer1.isDown && this.pointer1.y < this.half_worldHeight)
     }
 
     preload() { throw new Error('Not implemented') }
 
-    create() { throw new Error('Not implemented') }
+    create() {
+
+        this.leftButton.init()
+            .setPosition({ x: this.leftButton.displayWidth * 0.6, y: this.worldHeight - this.leftButton.displayHeight })
+            .pointerdown((pointer, localX, localY) => {
+                console.log(pointer, localX, localY)
+                this.leftPress = true
+            })
+            .pointerup(() => this.leftPress = false)
+            .pointerout(() => this.leftPress = false)
+
+        this.rightButton.init()
+            .setPosition({ x: this.rightButton.displayWidth * 1.65, y: this.worldHeight - this.rightButton.displayHeight })
+            .pointerdown(() => {console.log('right!') ; this.rightPress = true})
+            .pointerup(() => this.rightPress = false)
+            .pointerout(() => this.rightPress = false)
+
+        this.aButton.init()
+            .setPosition({ x: this.worldWidth - (this.aButton.displayWidth * 1.65), y: this.worldHeight - this.aButton.displayHeight })
+            .pointerdown(() => this.jumpPress = true)
+            .pointerup(() => this.jumpPress = false)
+            .pointerout(() => this.jumpPress = false)
+
+
+        this.bButton.init().setPosition({ x: this.worldWidth - this.bButton.displayWidth * 0.6, y: this.worldHeight - this.bButton.displayHeight })
+    }
 
     update() { throw new Error('Not implemented') }
 
