@@ -11,9 +11,14 @@ import BaseScene from './BaseScene';
 import StaticEnemy from './StaticEnemy'
 import Tileset from './Tileset'
 
-const PLAYER_START_POS = {x: 100, y: 3000}
+const PLAYER_START_POS = { x: 100, y: 3000 }
 
 class Scene01 extends BaseScene {
+    /**
+     * Crea una escena de juego
+     * @param {number} worldWidth Anchura del mundo
+     * @param {number} worldHeight Altura del mundo
+     */
     constructor(worldWidth, worldHeight) {
         super(worldWidth, worldHeight)
 
@@ -49,7 +54,7 @@ class Scene01 extends BaseScene {
         this.scoreText.init(0, 0, 'Score: 0');
         this.debugText.init(0, 32, '');
         this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
-        
+
 
         this.tileset
             .init('factory_map', 'factory_tiles')
@@ -154,7 +159,7 @@ class Scene01 extends BaseScene {
         });
 
 
-        this.physics.add.overlap(worldLayer, this.player.spin, (_w, tile) => {
+        this.physics.add.overlap(worldLayer, this.player.spin.sprite, (_w, tile) => {
             this.player.checkWallBounce(tile)
         });
 
@@ -174,6 +179,12 @@ class Scene01 extends BaseScene {
         this.bg.update(this.player.body.velocity.x, this.player.body.velocity.y);
         this.debugText.setText(`X: ${Math.round(this.player.x)} ; Y: ${Math.round(this.player.y)}, 
 p1x: ${Math.round(this.input.pointer1.x)} ; p2x: ${Math.round(this.input.pointer2.x)}`)
+
+        /* Si el jugador se cae al fondo, entonces muere y reiniciamos el juego */
+        if (this.player.y > 5000) {
+            this.player.setPosition(this.player.x, PLAYER_START_POS.y)
+            this.player.die()
+        }
     }
 }
 
