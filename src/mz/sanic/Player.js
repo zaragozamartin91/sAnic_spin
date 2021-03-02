@@ -17,7 +17,7 @@ const NEG_TRIPLE_ACCEL = -TRIPLE_ACCEL;
 
 const RAW_JUMP_POWER = 700;
 const JUMP_POWER = -RAW_JUMP_POWER;
-const BOUNCE_POWER = JUMP_POWER * 0.75
+const BOUNCE_POWER = JUMP_POWER * 1
 const NEG_BOUNCE_POWER = -BOUNCE_POWER
 
 const SPIN_TIMEOUT_MS = 200;
@@ -75,8 +75,6 @@ class Player {
         /* Seteo la velocidad maxima del sprite en el eje x e y */
         this.player.setMaxVelocity(MAX_SPEED_X, MAX_SPEED_Y);
 
-        this.onLandSuccess = EMPTY_LAMBDA;
-        this.onLandFail = EMPTY_LAMBDA;
         this.onDeath = EMPTY_LAMBDA;
 
         /* Manejadores de input desde el mundo exterior */
@@ -89,6 +87,9 @@ class Player {
 
         /* Controla si el personaje puede rebotar */
         this.canBounce = true;
+
+        /* Guarda los tiles sobre los cuales el jugador ha rebotado */
+        this.tilesBounced = {}
     }
 
     get sprite() { return this.player; }
@@ -252,8 +253,13 @@ class Player {
      */
     platformHandler() {
         return (_selfSprite, _platformSprite) => {
-            this.canSpin = false;
-            this.resetRotation();
+            /* Si algo bloquea hacia abajo -> estoy parado */
+            if (this.blockedDown()) {
+                // reseteamos los tiles sobre los cuales podemos rebotar
+                this.tilesBounced = {}
+            }
+            this.canSpin = false
+            this.resetRotation()
         };
     };
 
@@ -278,14 +284,14 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        console.log("this.blockedDown(): ", this.blockedDown(), " canSpin: ", this.canSpin, " canBounce: ", this.canBounce);
+        console.log("this.blockedDown(): ", this.blockedDown(), " canSpin: ", this.canSpin)
 
         if (this.blockedDown()) {
             // en el piso
             if (this.checkJumpPress()) { return this.jump() }
             if (this.checkLeftPress()) { return this.walkLeft() }
             if (this.checkRightPress()) { return this.walkRight() }
-            
+
 
             // si no presiono ningun boton y el personaje se esta moviendo lento...
             if (Math.abs(this.velocity.x) < HALF_ACCEL) {
@@ -340,9 +346,8 @@ class Player {
 
     bounce() {
         const bounceFactor = Math.abs(this.velocity.x) / MAX_SPEED_X
-        this.setVelocityY(BOUNCE_POWER * bounceFactor);
-        this.setVelocityX(this.velocity.x * -1);
-        this.canBounce = false;
+        this.setVelocityY(BOUNCE_POWER * bounceFactor)
+        this.setVelocityX(this.velocity.x * -1)
     }
 
     /**
@@ -350,9 +355,24 @@ class Player {
      * @param {number} enemyY Posicion enemigo Y
      */
     bounceOffEnemy(enemyY) {
-        const bp = this.y < enemyY ? BOUNCE_POWER : NEG_BOUNCE_POWER;
+        const bp = this.y < enemyY ? BOUNCE_POWER : NEG_BOUNCE_POWER
         this.setVelocityY(bp)
-        this.canBounce = false;
+    }
+
+    /**
+     * 
+     * @param {Phaser.Tilemaps.Tile} tile 
+     */
+    checkWallBounce(tile) {
+        if (tile.properties.bounce) {
+            const tileKey = tile.index
+            
+            const shouldBounce = this.tilesBounced[tileKey] === undefined && this.goingUp()
+            if (shouldBounce) {
+                this.tilesBounced[tileKey] = true
+                this.bounce()
+            }
+        }
     }
 
     rotateLeftMidair() {

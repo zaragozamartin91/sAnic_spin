@@ -53,6 +53,10 @@ class Tileset {
         return this
     }
 
+    /**
+     * @param {string} layerName
+     * @returns {Phaser.Tilemaps.TilemapLayer}
+     */
     getLayer(layerName) {
         return this.layers[layerName]
     }

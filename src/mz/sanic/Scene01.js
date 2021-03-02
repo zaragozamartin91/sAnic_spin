@@ -124,8 +124,8 @@ class Scene01 extends BaseScene {
             //We use a Group method called countActive to see how many this.stars are left alive
             if (this.stars.countActive(true) === 0) {
                 //enableBody(reset, x, y, enableGameObject, showGameObject)
-                this.stars.children.iterate(child => child.enableBody(true, child.x, 0, true, true));
-                let x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+                this.stars.children.iterate(child => child.enableBody(true, child.x, PLAYER_START_POS.y, true, true));
+                let x = Phaser.Math.Between(PLAYER_START_POS.x, PLAYER_START_POS.x + 300);
 
                 let bomb = this.bombs.create(x, PLAYER_START_POS.y, 'bomb');
                 bomb.setBounce(1);
@@ -155,9 +155,7 @@ class Scene01 extends BaseScene {
 
 
         this.physics.add.overlap(worldLayer, this.player.spin, (_w, tile) => {
-            if (tile.properties.bounce && this.player.canBounce && this.player.goingUp()) {
-                this.player.bounce();
-            }
+            this.player.checkWallBounce(tile)
         });
 
         /* MANEJO DE CAMARA ----------------------------------------------------------------------------------------------------------- */
