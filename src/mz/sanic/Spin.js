@@ -1,6 +1,6 @@
 import Player from './Player'
 
-const SPIN_DURATION_MS = 500;
+const SPIN_DURATION_MS = 400;
 const HALF_SPIN_DURATION_MS = SPIN_DURATION_MS / 2;
 
 const EMPTY_FN = () => { };
