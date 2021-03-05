@@ -5,7 +5,7 @@ module.exports = {
     entry: './src/index.js',
     output: {
         filename: 'main.js',
-        path: path.resolve(__dirname, 'js')
+        path: path.resolve(__dirname, 'public', 'js')
     },
 
     /* La siguiente instruccion hace que sea posible mapear los errores en runtime con el codigo fuente 
