@@ -7,3 +7,5 @@ plugins/
 public/js/main.js
 
 poc_stuff
+
+report.*.json

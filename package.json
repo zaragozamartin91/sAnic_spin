@@ -8,7 +8,7 @@
     "compile_dev": "webpack --mode development --config webpack.config.js",
     "compile_prod": "webpack --mode production --config webpack.config.js",
     "browser": "node server.js",
-    "start": "webpack --config webpack.config.js --mode production ; node server.js"
+    "start": "NODE_OPTIONS='--max-old-space-size=320' webpack --config webpack.config.js --mode production ; node server.js"
   },
   "author": "Martin Z",
   "license": "ISC",
