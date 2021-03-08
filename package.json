@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "webpack --config webpack.config.js",
-    "browser": "http-server -o",
-    "start": "webpack --config webpack.config.js ; node server.js"
+    "compile_dev": "webpack --mode development --config webpack.config.js",
+    "compile_prod": "webpack --mode production --config webpack.config.js",
+    "browser": "node server.js",
+    "start": "webpack --config webpack.config.js --mode production ; node server.js"
   },
   "author": "Martin Z",
   "license": "ISC",
