@@ -79,6 +79,7 @@ class Player {
         /* Seteo la velocidad maxima del sprite en el eje x e y */
         this.player.setMaxVelocity(MAX_SPEED_X, MAX_SPEED_Y)
 
+        this.dead = false
         this.onDeath = EMPTY_LAMBDA
 
         /* Manejadores de input desde el mundo exterior */
@@ -246,6 +247,14 @@ class Player {
      */
     resurrect() {
         this.dead = false;
+    }
+
+    isDead() {
+        return this.dead
+    }
+
+    isAlive() {
+        return !this.isDead()
     }
 
     /**

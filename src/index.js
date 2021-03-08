@@ -1,24 +1,43 @@
-import Phaser from 'phaser';
-import Scene01 from './mz/sanic/Scene01';
+import Phaser from 'phaser'
+import Scene01 from './mz/sanic/Scene01'
+import GlobalConfig from './mz/sanic/GlobalConfig'
 
 // set to either landscape
 if (!navigator.xr && self.isMobile && screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock('portrait-primary');
+    screen.orientation.lock('portrait-primary')
 }
 
 
-const MAX_WIDTH = 1024;
-const MAX_HEIGHT = 768;
-const GRAVITY_VAL = 1200;
+const MAX_WIDTH = 1024
+const MAX_HEIGHT = 768
+const GRAVITY_VAL = 1200
+
 
 document.onreadystatechange = function () {
-    console.log("onreadystatechange CALLED!");
+    console.log("onreadystatechange CALLED!")
     if (document.readyState === 'complete') {
         console.log('DOM is ready.')
 
-        startGame();
+        console.log('Fetching configuration')
+
+        httpGetAsync('/config', responseText => {
+            const config = JSON.parse(responseText)
+            console.log('Configuration is ', config)
+            GlobalConfig.setProfile(config.profile)
+            startGame()
+        })
     }
 };
+
+function httpGetAsync(theUrl, callback) {
+    var xmlHttp = new XMLHttpRequest()
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) callback(xmlHttp.responseText)
+    }
+    xmlHttp.open("GET", theUrl, true) // true for asynchronous 
+    xmlHttp.send(null)
+}
+
 
 function startGame() {
     const worldWidth = Math.min(window.innerWidth, MAX_WIDTH);
@@ -26,6 +45,8 @@ function startGame() {
 
     // create a new scene named "Game"
     let gameScene = new Scene01(worldWidth, worldHeight).build();
+
+    const physicsDebug = GlobalConfig.devProfile()
 
     let config = {
         type: Phaser.AUTO,
@@ -35,7 +56,7 @@ function startGame() {
         scene: gameScene,
         physics: {
             default: 'arcade',
-            arcade: { gravity: { y: GRAVITY_VAL }, debug: true }
+            arcade: { gravity: { y: GRAVITY_VAL }, debug: physicsDebug }
         },
         scale: {
             mode: Phaser.Scale.FIT,

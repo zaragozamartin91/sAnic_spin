@@ -1,17 +1,20 @@
 // @ts-check
 
-import Phaser from 'phaser';
-import Preloader from './Preloader';
-import Background from './Background';
-import Player from './Player';
-import GameText from './GameText';
-import Explosion from './Explosion';
-import Spin from './Spin';
-import BaseScene from './BaseScene';
+import Phaser from 'phaser'
+import Preloader from './Preloader'
+import Background from './Background'
+import Player from './Player'
+import GameText from './GameText'
+import Explosion from './Explosion'
+import Spin from './Spin'
+import BaseScene from './BaseScene'
 import StaticEnemy from './StaticEnemy'
 import Tileset from './Tileset'
+import GlobalConfig from './GlobalConfig'
 
 const PLAYER_START_POS = { x: 100, y: 3000 }
+const ABYSS_LIMIT = 5000
+const VOID_DEBUG_TEXT = { init: function () { }, setText: function () { } }
 
 class Scene01 extends BaseScene {
     /**
@@ -29,7 +32,7 @@ class Scene01 extends BaseScene {
 
         this.score = 0
         this.scoreText = new GameText(this.gameScene)
-        this.debugText = new GameText(this.gameScene)
+        this.debugText = GlobalConfig.devProfile() ? new GameText(this.gameScene) : VOID_DEBUG_TEXT
 
         this.bg = new Background(this.gameScene)
 
@@ -61,7 +64,8 @@ class Scene01 extends BaseScene {
             .createLayer('world')
             .createLayer('back')
             .setCollisionByProperty('world', { stand: true, bounce: true })
-            .renderDebug('world')
+        if (GlobalConfig.devProfile()) { this.tileset.renderDebug('world') }
+
         const worldLayer = this.tileset.getLayer('world')
 
         this.bombs = this.physics.add.group();
@@ -174,17 +178,20 @@ class Scene01 extends BaseScene {
 
 
     update() {
-        this.player.update();
-        this.spin.update();
-        this.bg.update(this.player.body.velocity.x, this.player.body.velocity.y);
-        this.debugText.setText(`X: ${Math.round(this.player.x)} ; Y: ${Math.round(this.player.y)}, 
-p1x: ${Math.round(this.input.pointer1.x)} ; p2x: ${Math.round(this.input.pointer2.x)}`)
+        if (this.player.isAlive()) {
+            this.player.update()
+            this.spin.update()
+            this.bg.update(this.player.body.velocity.x, this.player.body.velocity.y)
+        }
 
         /* Si el jugador se cae al fondo, entonces muere y reiniciamos el juego */
-        if (this.player.y > 5000) {
-            this.player.setPosition(this.player.x, PLAYER_START_POS.y)
+        if (this.player.y > ABYSS_LIMIT) {
+            this.player.setPosition(0, ABYSS_LIMIT - 100)
             this.player.die()
         }
+
+        this.debugText.setText(`X: ${Math.round(this.player.x)} ; Y: ${Math.round(this.player.y)}, 
+p1x: ${Math.round(this.input.pointer1.x)} ; p2x: ${Math.round(this.input.pointer2.x)}`)
     }
 }
 
