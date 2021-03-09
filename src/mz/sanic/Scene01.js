@@ -1,6 +1,5 @@
 // @ts-check
 
-import Phaser from 'phaser'
 import Preloader from './Preloader'
 import Background from './Background'
 import Player from './Player'
@@ -15,6 +14,10 @@ import GlobalConfig from './GlobalConfig'
 const PLAYER_START_POS = { x: 100, y: 3000 }
 const ABYSS_LIMIT = 5000
 const VOID_DEBUG_TEXT = { init: function () { }, setText: function () { } }
+
+function numberBetween(lowBound, upBound) {
+    return (Math.random() * (upBound - lowBound) + lowBound)
+}
 
 class Scene01 extends BaseScene {
     /**
@@ -110,7 +113,7 @@ class Scene01 extends BaseScene {
             setXY: { x: 12, y: PLAYER_START_POS.y, stepX: 70 } //this is used to set the position of the 12 children the Group creates. Each child will be placed starting at x: 12, y: 0 and with an x step of 70
         });
 
-        this.stars.children.iterate(function (child) { child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)); });
+        this.stars.children.iterate(function (child) { child.setBounceY(numberBetween(0.4, 0.8)); });
 
         /* DETECCION DE COLISION ----------------------------------------------------------------------------------------------------------------- */
 
@@ -134,12 +137,12 @@ class Scene01 extends BaseScene {
             if (this.stars.countActive(true) === 0) {
                 //enableBody(reset, x, y, enableGameObject, showGameObject)
                 this.stars.children.iterate(child => child.enableBody(true, child.x, PLAYER_START_POS.y, true, true));
-                let x = Phaser.Math.Between(PLAYER_START_POS.x, PLAYER_START_POS.x + 300);
+                let x = numberBetween(PLAYER_START_POS.x, PLAYER_START_POS.x + 300);
 
                 let bomb = this.bombs.create(x, PLAYER_START_POS.y, 'bomb');
                 bomb.setBounce(1);
                 bomb.setCollideWorldBounds(false);
-                bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+                bomb.setVelocity(numberBetween(-200, 200), 20);
             }
         });
 

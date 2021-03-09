@@ -57,7 +57,6 @@ class BaseScene {
     preload() { throw new Error('Not implemented') }
 
     create() {
-
         this.leftButton.init()
             .setPosition({ x: this.leftButton.displayWidth * 0.6, y: this.worldHeight - this.leftButton.displayHeight })
             .pointerdown((pointer, localX, localY) => {

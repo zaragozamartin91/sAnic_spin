@@ -4,7 +4,7 @@ package-lock.json
 platforms/
 plugins/
 
-public/js/main.js
+public/js/main.js*
 
 poc_stuff
 
