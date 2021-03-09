@@ -7,7 +7,7 @@
     "compile_dev": "webpack --config webpack.config.base.js",
     "compile_prod": "webpack --config webpack.config.prod.js",
     "browser": "node server.js",
-    "start": "NODE_OPTIONS='--max-old-space-size=256' webpack --config webpack.config.prod.js ; node server.js"
+    "start": "node server.js"
   },
   "author": "Martin Z",
   "license": "ISC",
