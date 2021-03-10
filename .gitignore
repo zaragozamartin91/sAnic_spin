@@ -9,3 +9,4 @@ public/js/main.js.LICENSE*
 poc_stuff
 
 report.*.json
+**/.DS_Store

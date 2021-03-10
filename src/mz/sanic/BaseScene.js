@@ -3,30 +3,41 @@
 import Phaser from 'phaser';
 import ActionButton from './ActionButton'
 
-class BaseScene {
-    constructor(worldWidth, worldHeight) {
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
-        this.half_worldWidth = worldWidth / 2;
-        this.half_worldHeight = worldHeight / 2;
+const WORLD_DIMS = { worldWidth: 0, worldHeight: 0, half_worldWidth: 0, half_worldHeight: 0 }
 
-        // create a new scene named "Game"
-        this.gameScene = new Phaser.Scene('Scene01');
+class BaseScene extends Phaser.Scene {
+    /**
+     * Crea una escena base
+     * @param {string} sceneName Nombre de escena
+     */
+    constructor(sceneName) {
+        super(sceneName)
 
-        this.leftButton = new ActionButton(this.gameScene, 'left_btn')
-        this.rightButton = new ActionButton(this.gameScene, 'right_btn')
-        this.aButton = new ActionButton(this.gameScene, 'a_btn')
-        this.bButton = new ActionButton(this.gameScene, 'b_btn')
+        this.leftButton = new ActionButton(this, 'left_btn')
+        this.rightButton = new ActionButton(this, 'right_btn')
+        this.aButton = new ActionButton(this, 'a_btn')
+        this.bButton = new ActionButton(this, 'b_btn')
     }
 
-    get input() { return this.gameScene.input; }
+    /**
+     * Establece las dimensiones del mundo
+     * @param {number} worldWidth Anchura del mundo
+     * @param {number} worldHeight Altura del mundo
+     */
+    static setWorldDimensions(worldWidth, worldHeight) {
+        WORLD_DIMS.worldWidth = worldWidth
+        WORLD_DIMS.worldHeight = worldHeight
+        WORLD_DIMS.half_worldWidth = worldWidth / 2
+        WORLD_DIMS.half_worldHeight = worldHeight / 2
+    }
 
-    get physics() { return this.gameScene.physics; }
-
-    get cameras() { return this.gameScene.cameras; }
+    static getWorldDimensions() {
+        const { worldWidth, worldHeight, half_worldWidth, half_worldHeight } = WORLD_DIMS
+        return { worldWidth, worldHeight, half_worldWidth, half_worldHeight }
+    }
 
     /** Obtiene el manejador del puntero tactil */
-    get pointer1() { return this.input.pointer1; }
+    get pointer1() { return this.input.pointer1 }
 
     /** Obtiene el manejador de teclado */
     get cursors() {
@@ -35,9 +46,6 @@ class BaseScene {
         if (!this.cs) { this.cs = this.input.keyboard.createCursorKeys(); }
         return this.cs;
     }
-
-    /** Obtiene el SceneManager de esta escena */
-    get scene() { return this.gameScene.scene; }
 
     checkLeftPress() {
         return this.cursors.left.isDown || this.leftPress
@@ -58,7 +66,7 @@ class BaseScene {
 
     create() {
         this.leftButton.init()
-            .setPosition({ x: this.leftButton.displayWidth * 0.6, y: this.worldHeight - this.leftButton.displayHeight })
+            .setPosition({ x: this.leftButton.displayWidth * 0.6, y: WORLD_DIMS.worldHeight - this.leftButton.displayHeight })
             .pointerdown((pointer, localX, localY) => {
                 console.log(pointer, localX, localY)
                 this.leftPress = true
@@ -67,29 +75,31 @@ class BaseScene {
             .pointerout(() => this.leftPress = false)
 
         this.rightButton.init()
-            .setPosition({ x: this.rightButton.displayWidth * 1.65, y: this.worldHeight - this.rightButton.displayHeight })
-            .pointerdown(() => {console.log('right!') ; this.rightPress = true})
+            .setPosition({ x: this.rightButton.displayWidth * 1.65, y: WORLD_DIMS.worldHeight - this.rightButton.displayHeight })
+            .pointerdown(() => { console.log('right!'); this.rightPress = true })
             .pointerup(() => this.rightPress = false)
             .pointerout(() => this.rightPress = false)
 
         this.aButton.init()
-            .setPosition({ x: this.worldWidth - (this.aButton.displayWidth * 1.65), y: this.worldHeight - this.aButton.displayHeight })
+            .setPosition({ x: WORLD_DIMS.worldWidth - (this.aButton.displayWidth * 1.65), y: WORLD_DIMS.worldHeight - this.aButton.displayHeight })
             .pointerdown(() => this.jumpPress = true)
             .pointerup(() => this.jumpPress = false)
             .pointerout(() => this.jumpPress = false)
 
 
-        this.bButton.init().setPosition({ x: this.worldWidth - this.bButton.displayWidth * 0.6, y: this.worldHeight - this.bButton.displayHeight })
+        this.bButton.init().setPosition({ x: WORLD_DIMS.worldWidth - this.bButton.displayWidth * 0.6, y: WORLD_DIMS.worldHeight - this.bButton.displayHeight })
     }
 
     update() { throw new Error('Not implemented') }
 
-    build() {
-        this.gameScene.preload = () => this.preload();
-        this.gameScene.create = () => this.create();
-        this.gameScene.update = () => this.update();
-
-        return this.gameScene;
+    /**
+     * Calcula un numero aleatorio entre dos limites
+     * @param {number} lowBound Limite inferior
+     * @param {number} upBound Limite superior
+     * @returns {number} Numero aleatorio
+     */
+    numberBetween(lowBound, upBound) {
+        return (Math.random() * (upBound - lowBound) + lowBound)
     }
 }
 

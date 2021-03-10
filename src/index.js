@@ -30,7 +30,7 @@ document.onreadystatechange = function () {
 };
 
 function httpGetAsync(theUrl, callback) {
-    var xmlHttp = new XMLHttpRequest()
+    const xmlHttp = new XMLHttpRequest()
     xmlHttp.onreadystatechange = function () {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) callback(xmlHttp.responseText)
     }
@@ -43,8 +43,7 @@ function startGame() {
     const worldWidth = Math.min(window.innerWidth, MAX_WIDTH);
     const worldHeight = Math.min(window.innerHeight, MAX_HEIGHT);
 
-    // create a new scene named "Game"
-    let gameScene = new Scene01(worldWidth, worldHeight).build();
+    Scene01.setWorldDimensions(worldWidth, worldHeight)
 
     const physicsDebug = GlobalConfig.devProfile()
 
@@ -53,7 +52,7 @@ function startGame() {
         width: worldWidth,
         height: worldHeight,
         parent: 'main',
-        scene: gameScene,
+        scene: [Scene01],
         physics: {
             default: 'arcade',
             arcade: { gravity: { y: GRAVITY_VAL }, debug: physicsDebug }

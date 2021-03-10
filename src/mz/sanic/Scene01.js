@@ -15,35 +15,30 @@ const PLAYER_START_POS = { x: 100, y: 3000 }
 const ABYSS_LIMIT = 5000
 const VOID_DEBUG_TEXT = { init: function () { }, setText: function () { } }
 
-function numberBetween(lowBound, upBound) {
-    return (Math.random() * (upBound - lowBound) + lowBound)
-}
 
 class Scene01 extends BaseScene {
     /**
      * Crea una escena de juego
-     * @param {number} worldWidth Anchura del mundo
-     * @param {number} worldHeight Altura del mundo
      */
-    constructor(worldWidth, worldHeight) {
-        super(worldWidth, worldHeight)
+    constructor() {
+        super('Scene01')
 
-        this.preloader = new Preloader(this.gameScene)
+        this.preloader = new Preloader(this)
 
-        this.player = new Player(this.gameScene) // objeto del heroe
-        this.explosion = new Explosion(this.gameScene) // explosion
+        this.player = new Player(this) // objeto del heroe
+        this.explosion = new Explosion(this) // explosion
 
         this.score = 0
-        this.scoreText = new GameText(this.gameScene)
-        this.debugText = GlobalConfig.devProfile() ? new GameText(this.gameScene) : VOID_DEBUG_TEXT
+        this.scoreText = new GameText(this)
+        this.debugText = GlobalConfig.devProfile() ? new GameText(this) : VOID_DEBUG_TEXT
 
-        this.bg = new Background(this.gameScene)
+        this.bg = new Background(this)
 
-        this.spin = new Spin(this.gameScene)
+        this.spin = new Spin(this)
 
-        this.wasp = new StaticEnemy(this.gameScene, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
+        this.wasp = new StaticEnemy(this, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
 
-        this.tileset = new Tileset(this.gameScene)
+        this.tileset = new Tileset(this)
     }
 
 
@@ -59,7 +54,8 @@ class Scene01 extends BaseScene {
 
         this.scoreText.init(0, 0, 'Score: 0');
         this.debugText.init(0, 32, '');
-        this.bg.init(this.half_worldWidth, this.half_worldHeight, this.worldWidth, this.worldHeight);
+        const wd = Scene01.getWorldDimensions()
+        this.bg.init(wd.half_worldWidth, wd.half_worldHeight, wd.worldWidth, wd.worldHeight);
 
 
         this.tileset
@@ -113,7 +109,7 @@ class Scene01 extends BaseScene {
             setXY: { x: 12, y: PLAYER_START_POS.y, stepX: 70 } //this is used to set the position of the 12 children the Group creates. Each child will be placed starting at x: 12, y: 0 and with an x step of 70
         });
 
-        this.stars.children.iterate(function (child) { child.setBounceY(numberBetween(0.4, 0.8)); });
+        this.stars.children.iterate(child => { child.setBounceY(this.numberBetween(0.4, 0.8)) })
 
         /* DETECCION DE COLISION ----------------------------------------------------------------------------------------------------------------- */
 
@@ -137,12 +133,12 @@ class Scene01 extends BaseScene {
             if (this.stars.countActive(true) === 0) {
                 //enableBody(reset, x, y, enableGameObject, showGameObject)
                 this.stars.children.iterate(child => child.enableBody(true, child.x, PLAYER_START_POS.y, true, true));
-                let x = numberBetween(PLAYER_START_POS.x, PLAYER_START_POS.x + 300);
+                let x = this.numberBetween(PLAYER_START_POS.x, PLAYER_START_POS.x + 300);
 
                 let bomb = this.bombs.create(x, PLAYER_START_POS.y, 'bomb');
                 bomb.setBounce(1);
                 bomb.setCollideWorldBounds(false);
-                bomb.setVelocity(numberBetween(-200, 200), 20);
+                bomb.setVelocity(this.numberBetween(-200, 200), 20);
             }
         });
 
