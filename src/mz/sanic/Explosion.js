@@ -31,6 +31,8 @@ class Explosion {
         });
 
         this.p_sprite.on('animationcomplete', () => this.disableBody(true, true));
+
+        this.p_sprite.setDepth(1)
     }
 
     get sprite() { return this.p_sprite; }
