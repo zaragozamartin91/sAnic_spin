@@ -173,7 +173,6 @@ class Scene01 extends BaseScene {
         this.tweens.add({
             targets: this.wasps[1].enemy,
             props: { x: 1900 },
-            ease: 'Power1',
             duration: 1000,
             yoyo: true,
             repeat: -1
