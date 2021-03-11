@@ -36,9 +36,17 @@ class Scene01 extends BaseScene {
 
         this.spin = new Spin(this)
 
-        this.wasp = new StaticEnemy(this, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
-
         this.tileset = new Tileset(this)
+
+        // Enemigos tipo avispa
+        const newWasp = () => {
+            return new StaticEnemy(this,
+                { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
+        }
+        this.wasps = [
+            { pos: { x: 1000, y: 2900 }, enemy: newWasp() },
+            { pos: { x: 1735, y: 2800 }, enemy: newWasp() }
+        ]
     }
 
 
@@ -74,8 +82,7 @@ class Scene01 extends BaseScene {
         this.explosion.init(100, 950);
         this.explosion.disableBody(true, true);
 
-        this.wasp.init(1000, 2900)
-        this.wasp.playAnim()
+        this.wasps.forEach(w => w.enemy.init(w.pos.x, w.pos.y).playAnim())
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
@@ -150,17 +157,27 @@ class Scene01 extends BaseScene {
             this.player.die();
         });
 
-        this.physics.add.collider(this.player.sprite, this.wasp.sprite, (p, _) => {
-            this.explosion.explode(this.player.x, this.player.y);
-            this.player.die();
-        });
+        this.wasps.map(w => w.enemy).forEach(wasp => {
+            this.physics.add.collider(this.player.sprite, wasp.sprite, (p, _) => {
+                this.explosion.explode(this.player.x, this.player.y)
+                this.player.die()
+            })
 
-        this.physics.add.collider(this.spin.sprite, this.wasp.sprite, (p, _) => {
-            this.explosion.explode(this.wasp.x, this.wasp.y);
-            this.player.bounceOffEnemy(this.wasp.y)
-            this.wasp.die();
-        });
+            this.physics.add.collider(this.spin.sprite, wasp.sprite, (p, _) => {
+                this.explosion.explode(wasp.x, wasp.y)
+                this.player.bounceOffEnemy(wasp.y)
+                wasp.die()
+            })
+        })
 
+        this.tweens.add({
+            targets: this.wasps[1].enemy,
+            props: { x: 1900 },
+            ease: 'Power1',
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        })
 
         this.physics.add.overlap(worldLayer, this.player.spin.sprite, (_w, tile) => {
             this.player.checkWallBounce(tile)

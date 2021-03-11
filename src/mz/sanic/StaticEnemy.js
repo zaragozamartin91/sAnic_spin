@@ -25,20 +25,25 @@ class StaticEnemy {
      * Inicializa el enemigo en una posicion.
      * @param {Number} x Posicion x.
      * @param {Number} y Posicion y.
+     * @param {boolean} allowGravity True para habilitar la gravedad en el eje Y, false en caso contrario
      */
-    init(x, y) {
+    init(x, y, allowGravity = false) {
         const scene = this.scene;
         const startFrame = `${this.prefix}0${this.start}${this.suffix}` // algo como wasp_01.png
         console.log('Loading ', this.key, ' static enemy with startFrame ', startFrame)
-        this.p_sprite = scene.physics.add.staticSprite(x, y, this.key, startFrame);
+        this.p_sprite = scene.physics.add.sprite(x, y, this.key, startFrame)
+        this.p_sprite.body.setAllowGravity(allowGravity)
 
         AssetLoader.loadFor(scene, this.key, () => {
             const frames = scene.anims.generateFrameNames(this.key, {
                 start: this.start, end: this.end, zeroPad: 2, prefix: this.prefix, suffix: this.suffix
-            });
+            })
 
-            scene.anims.create({ key: this.animKey, frames: frames, duration: this.animDurationMs, repeat: REPEAT_FOREVER });
-        });
+            scene.anims.create({ 
+                key: this.animKey, frames: frames, duration: this.animDurationMs, repeat: REPEAT_FOREVER })
+        })
+
+        return this
     }
 
     get sprite() { return this.p_sprite; }
@@ -82,6 +87,10 @@ class StaticEnemy {
     get x() { return this.sprite.x; }
 
     get y() { return this.sprite.y; }
+
+    set x(nx) { this.sprite.setX(nx) }
+
+    set bodyX(nx) { this.sprite.body.x = nx }
 
     die() {
         this.disableBody()

@@ -63,8 +63,11 @@ class Spin {
         /* Establecemos como duracion la mitad del tiempo dado que la animacion hace un yoyo */
         this.scene.tweens.add({
             targets: self.sprite,
-            scaleX: 1,
-            scaleY: 1,
+            
+            props: {
+                scaleX: 1,
+                scaleY: 1,
+            },
 
             ease: 'Power1',
             duration: HALF_SPIN_DURATION_MS,
