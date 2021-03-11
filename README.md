@@ -4,14 +4,16 @@ Variante del juego sAnic pero con mecanica de spin mid-air.
 
 ## Instalar dependencias
 
-Antes de correr comandos de cordova y webpack es necesario descargar las dependencias de node.
-
 * Correr `npm install` en / (raiz del proyecto)
 
 ## Compilar fuentes (con webpack)
 
-Correr `npm run compile`.
+Antes de pushear cambios al repo, compilar el juego para produccion:
+* Correr `npm run compile_prod`.
+
+De esta manera se genera el archivo `public/main.js` que contiene el codigo productivo del juego compilado con webpack
 
 ## Abrir juego en browser
 
-Correr `npm run browser`.
+Correr `npm start` y abrir una ventana del browser en `localhost:8080`.
+
