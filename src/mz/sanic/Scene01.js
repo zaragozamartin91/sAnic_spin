@@ -45,7 +45,10 @@ class Scene01 extends BaseScene {
         }
         this.wasps = [
             { pos: { x: 1000, y: 2900 }, enemy: newWasp() },
-            { pos: { x: 1735, y: 2800 }, enemy: newWasp() }
+            {
+                pos: { x: 1735, y: 2800 }, enemy: newWasp(),
+                tweencfg: { props: { x: 1900 }, duration: 1000, yoyo: true, repeat: -1 }
+            }
         ]
     }
 
@@ -93,20 +96,21 @@ class Scene01 extends BaseScene {
             checkJumpPress: () => this.checkJumpPress(),
             checkLeftPress: () => this.checkLeftPress(),
             checkRightPress: () => this.checkRightPress()
-        });
+        })
 
         this.player.setOnDeath(() => {
-            this.physics.pause();
+            this.explosion.explode(this.player.x, this.player.y)
+            this.physics.pause()
             window.setTimeout(() => {
-                this.player.resurrect();
-                this.scene.restart();
-            }, 1000);
-        });
+                this.player.resurrect()
+                this.scene.restart()
+            }, 1000)
+        })
 
         /* when it lands after jumping it will bounce ever so slightly */
-        this.player.setBounce(0.0);
+        this.player.setBounce(0.0)
         /* Esta funcion hace que el personaje colisione con los limites del juego */
-        this.player.setCollideWorldBounds(false);
+        this.player.setCollideWorldBounds(false)
 
         //Let's drop a sprinkling of stars into the scene and allow the player to collect them ----------------------------------------------------
         //Groups are able to take configuration objects to aid in their setup
@@ -153,13 +157,13 @@ class Scene01 extends BaseScene {
         this.physics.add.collider(this.bombs, worldLayer);
 
         this.physics.add.collider(this.player.sprite, this.bombs, (p, _) => {
-            this.explosion.explode(this.player.x, this.player.y);
             this.player.die();
         });
 
-        this.wasps.map(w => w.enemy).forEach(wasp => {
+        this.wasps.forEach(w => {
+            const wasp = w.enemy
+
             this.physics.add.collider(this.player.sprite, wasp.sprite, (p, _) => {
-                this.explosion.explode(this.player.x, this.player.y)
                 this.player.die()
             })
 
@@ -168,15 +172,10 @@ class Scene01 extends BaseScene {
                 this.player.bounceOffEnemy(wasp.y)
                 wasp.die()
             })
+
+            if (w.tweencfg) this.tweens.add({ ...w.tweencfg, targets: wasp })
         })
 
-        this.tweens.add({
-            targets: this.wasps[1].enemy,
-            props: { x: 1900 },
-            duration: 1000,
-            yoyo: true,
-            repeat: -1
-        })
 
         this.physics.add.overlap(worldLayer, this.player.spin.sprite, (_w, tile) => {
             this.player.checkWallBounce(tile)
