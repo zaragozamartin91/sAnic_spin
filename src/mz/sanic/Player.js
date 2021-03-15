@@ -4,7 +4,7 @@ import AssetLoader from './AssetLoader'
 import Spin from './Spin'
 
 const MAX_SPEED_X = 400;
-const MAX_SPEED_Y = 2000;
+const MAX_SPEED_Y = 1100;
 
 /* Aceleracion del jugador mientras camina */
 const ACCEL = MAX_SPEED_X * 0.90;
