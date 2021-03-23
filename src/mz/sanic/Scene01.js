@@ -40,15 +40,28 @@ class Scene01 extends BaseScene {
 
         // Enemigos tipo avispa
         const newWasp = () => {
-            return new StaticEnemy(this,
-                { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
+            return new StaticEnemy(this, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
         }
         this.wasps = [
             { pos: { x: 1000, y: 2900 }, enemy: newWasp() },
             {
-                pos: { x: 1735, y: 2800 }, enemy: newWasp(),
-                tweencfg: { props: { x: 1900 }, duration: 1000, yoyo: true, repeat: -1 }
+                pos: { x: 1900, y: 2800 }, enemy: newWasp(),
+                tweencfg: { props: { x: 1735 }, duration: 1000, yoyo: true, repeat: -1, flipX: true }
             }
+        ]
+
+        const newCrab = () => {
+            return new StaticEnemy(this, { key: 'crab_walk', prefix: 'crab_', suffix: '.png', start: 8, end: 18, animDurationMs: 2000, scale: 0.5 })
+        }
+        this.crabs = [
+            {
+                pos: { x: 280, y: 3300 }, enemy: newCrab(),
+                tweencfg: { props: { x: 700 }, duration: 3000, yoyo: true, repeat: -1, flipX: true, hold: 500, repeatDelay: 500 }
+            },
+            {
+                pos: { x: 1260, y: 2220 }, enemy: newCrab(),
+                tweencfg: { props: { x: 1450 }, duration: 2500, yoyo: true, repeat: -1, flipX: true, hold: 500, repeatDelay: 500 }
+            },
         ]
     }
 
@@ -86,6 +99,7 @@ class Scene01 extends BaseScene {
         this.explosion.disableBody(true, true);
 
         this.wasps.forEach(w => w.enemy.init(w.pos.x, w.pos.y).playAnim())
+        this.crabs.forEach(c => c.enemy.init(c.pos.x, c.pos.y, true).playAnim())
 
         /* creamos al heroe o jugador----------------------------------------------------------------------------------------------------------------------- */
         // agregamos un ArcadeSprite del jugador
@@ -101,10 +115,10 @@ class Scene01 extends BaseScene {
         this.player.setOnDeath(() => {
             this.explosion.explode(this.player.x, this.player.y)
             this.physics.pause()
-            window.setTimeout(() => {
+            this.time.delayedCall(1000, () => {
                 this.player.resurrect()
                 this.scene.restart()
-            }, 1000)
+            })
         })
 
         /* when it lands after jumping it will bounce ever so slightly */
@@ -174,6 +188,23 @@ class Scene01 extends BaseScene {
             })
 
             if (w.tweencfg) this.tweens.add({ ...w.tweencfg, targets: wasp })
+        })
+
+        this.crabs.forEach(c => {
+            const crab = c.enemy
+            this.physics.add.collider(crab.sprite, worldLayer)
+
+            this.physics.add.collider(this.player.sprite, crab.sprite, (p, _) => {
+                this.player.die()
+            })
+
+            this.physics.add.collider(this.spin.sprite, crab.sprite, (p, _) => {
+                this.explosion.explode(crab.x, crab.y)
+                this.player.bounceOffEnemy(crab.y)
+                crab.die()
+            })
+
+            if (c.tweencfg) this.tweens.add({ ...c.tweencfg, targets: crab })
         })
 
 

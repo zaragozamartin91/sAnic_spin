@@ -340,9 +340,10 @@ class Player {
         this.initialAngularVelocity = this.velocity.x
         this.setAngularVelocity(this.initialAngularVelocity)
 
-        setTimeout(() => this.canSpin = true, SPIN_TIMEOUT_MS)
+        this.scene.time.delayedCall(SPIN_TIMEOUT_MS, this.enableSpin, [], this)
     }
 
+    enableSpin() { this.canSpin = true }
 
     bounce() {
         const bf = this.getGameFrame()
