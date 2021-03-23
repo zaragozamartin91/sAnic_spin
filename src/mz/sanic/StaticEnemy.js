@@ -8,9 +8,9 @@ class StaticEnemy {
     /**
      * Crea un objeto de tipo Enemigo estatico
      * @param {Phaser.Scene} scene Escena del juego
-     * @param {{key:string, prefix:string, suffix:string, start:number, end:number, animDurationMs:number}} config Configuracion del enemigo
+     * @param {{key:string, prefix:string, suffix:string, start:number, end:number, animDurationMs:number, scale?:number}} config Configuracion del enemigo
      */
-    constructor(scene, { key, prefix, suffix, start, end, animDurationMs }) {
+    constructor(scene, { key, prefix, suffix, start, end, animDurationMs, scale }) {
         this.scene = scene;
         this.key = key;
         this.prefix = prefix;
@@ -19,6 +19,7 @@ class StaticEnemy {
         this.end = end
         this.animKey = `${key}_anim`
         this.animDurationMs = animDurationMs || 500
+        this.scale = scale || 1
     }
 
     /**
@@ -32,6 +33,7 @@ class StaticEnemy {
         const startFrame = `${this.prefix}0${this.start}${this.suffix}` // algo como wasp_01.png
         console.log('Loading ', this.key, ' static enemy with startFrame ', startFrame)
         this.p_sprite = scene.physics.add.sprite(x, y, this.key, startFrame)
+        this.p_sprite.setScale(this.scale, this.scale)
         this.p_sprite.body.setAllowGravity(allowGravity)
 
         AssetLoader.loadFor(scene, this.key, () => {
@@ -39,8 +41,9 @@ class StaticEnemy {
                 start: this.start, end: this.end, zeroPad: 2, prefix: this.prefix, suffix: this.suffix
             })
 
-            scene.anims.create({ 
-                key: this.animKey, frames: frames, duration: this.animDurationMs, repeat: REPEAT_FOREVER })
+            scene.anims.create({
+                key: this.animKey, frames: frames, duration: this.animDurationMs, repeat: REPEAT_FOREVER
+            })
         })
 
         return this
@@ -62,6 +65,14 @@ class StaticEnemy {
      * Reproduce la animacion.
      */
     playAnim() { this.sprite.anims.play(this.animKey, true); }
+
+    /**
+     * Reproduce la animacion.
+     */
+    pauseAnim(time) {
+        this.sprite.anims.pause()
+        this.scene.time.delayedCall(time, () => { this.playAnim() })
+    }
 
     /**
      * Desactiva un cuerpo de phaser.
@@ -91,6 +102,10 @@ class StaticEnemy {
     set x(nx) { this.sprite.setX(nx) }
 
     set bodyX(nx) { this.sprite.body.x = nx }
+
+    set flipX(f) { this.sprite.setFlipX(f) }
+
+    toggleFlipX() { this.flipX = !this.sprite.flipX }
 
     die() {
         this.disableBody()

@@ -25,15 +25,18 @@ class Preloader {
 
             this.scene.load.image('spin', 'assets/circle.png')
 
-            // cargamos la imagen del enemigo
+            // cargamos la imagen de la avispa
             this.scene.load.multiatlas('wasp', 'assets/wasp.json', 'assets')
+
+            // cargamos la imagen de la avispa
+            this.scene.load.multiatlas('crab_walk', 'assets/crab_walk.json', 'assets')
 
             // cargamos los tiles del map
             this.scene.load.image('main_map', 'assets/main_map_tiles.png')
-            this.scene.load.tilemapTiledJSON('main_map','assets/main_map.json')
+            this.scene.load.tilemapTiledJSON('main_map', 'assets/main_map.json')
 
             this.scene.load.image('factory_map', 'assets/factory_tiles.png')
-            this.scene.load.tilemapTiledJSON('factory_map','assets/factory_map.json')
+            this.scene.load.tilemapTiledJSON('factory_map', 'assets/factory_map.json')
 
             // cargamos las imagenes de los botones
             this.scene.load.image('left_btn', 'assets/buttons/left.png')
