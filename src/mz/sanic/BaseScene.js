@@ -43,8 +43,14 @@ class BaseScene extends Phaser.Scene {
     get cursors() {
         //Phaser has a built-in Keyboard manager 
         //This populates the cursors object with four properties: up, down, left, right, that are all instances of Key objects. 
-        if (!this.cs) { this.cs = this.input.keyboard.createCursorKeys(); }
-        return this.cs;
+        return this.cs
+    }
+
+    createKeyboardCursorKeys() {
+        //Phaser has a built-in Keyboard manager 
+        //This populates the cursors object with four properties: up, down, left, right, that are all instances of Key objects. 
+        console.log('Creating keyboard cursor keys') 
+        this.cs = this.input.keyboard.createCursorKeys()
     }
 
     checkLeftPress() {
@@ -65,6 +71,8 @@ class BaseScene extends Phaser.Scene {
     preload() { throw new Error('Not implemented') }
 
     create() {
+        this.createKeyboardCursorKeys()
+
         this.leftButton.init()
             .setPosition({ x: this.leftButton.displayWidth * 0.6, y: WORLD_DIMS.worldHeight - this.leftButton.displayHeight })
             .pointerdown((pointer, localX, localY) => {
