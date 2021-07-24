@@ -43,11 +43,12 @@ class Tileset {
         return this
     }
 
-    renderDebug(layerName) {
+    renderDebug(layerName, collideConfig = {red: 255, green: 255, blue: 50, alpha: 255}) {
         const debugGraphics = this.scene.add.graphics().setAlpha(0.5)
+        const cc = collideConfig
         this.getLayer(layerName).renderDebug(debugGraphics, {
             tileColor: null,
-            collidingTileColor: new Phaser.Display.Color(255, 255, 50, 255),
+            collidingTileColor: new Phaser.Display.Color(cc.red, cc.green, cc.blue, cc.alpha),
             faceColor: new Phaser.Display.Color(0, 255, 0, 255)
         })
         return this

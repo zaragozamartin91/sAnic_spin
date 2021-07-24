@@ -79,6 +79,7 @@ class Player {
         /* Seteo la velocidad maxima del sprite en el eje x e y */
         this.player.setMaxVelocity(MAX_SPEED_X, MAX_SPEED_Y)
 
+        /* Determina si el personaje esta muerto */
         this.dead = false
         this.onDeath = EMPTY_LAMBDA
 
@@ -263,12 +264,7 @@ class Player {
      */
     platformHandler() {
         return (_selfSprite, _platformSprite) => {
-            /* Si algo bloquea hacia abajo -> estoy parado */
-            if (this.blockedDown()) {
-                // reseteamos los tiles sobre los cuales podemos rebotar
-                this.tilesBounced = {}
-            }
-            this.canSpin = false
+            this.disableSpin()
             this.resetRotation()
         }
     }
@@ -284,8 +280,6 @@ class Player {
      * Actualiza el estado del jugador a partir de los inputs del mundo real.
      */
     update() {
-        console.log("this.blockedDown(): ", this.blockedDown(), " canSpin: ", this.canSpin)
-
         if (this.blockedDown()) {
             // en el piso
             if (this.checkJumpPress()) { return this.jump() }
@@ -345,9 +339,11 @@ class Player {
 
     enableSpin() { this.canSpin = true }
 
+    disableSpin() { this.canSpin = false }
+
     bounce() {
         const bf = this.getGameFrame()
-        /* Para prevenir doble rebotes, verifico si pasaron mas de 5 frames del ultimo rebote */
+        /* Para prevenir doble rebotes, verifico si pasaron mas de $BOUNCE_FRAME_SPAN frames del ultimo rebote */
         if (this.bounceFrame === DEFAULT_BOUNCE_FRAME || Math.abs(bf - this.bounceFrame) > BOUNCE_FRAME_SPAN) {
             this.bounceFrame = bf
             const bounceFactor = Math.abs(this.velocity.x) / MAX_SPEED_X
@@ -370,7 +366,7 @@ class Player {
     }
 
     /**
-     * 
+     * Chequea y ejecuta condicion de rebote contra un TILE
      * @param {Phaser.Tilemaps.Tile} tile 
      */
     checkWallBounce(tile) {
@@ -378,6 +374,14 @@ class Player {
             this.bounce()
             this.spin.disableBody(true, false)
         }
+    }
+
+    /**
+     * Chequea y ejecuta condicion de muerte contra un obstaculo peligroso
+     * @param {Phaser.Tilemaps.Tile} tile 
+     */
+    checkHazard(tile) {
+        if (tile.properties.deadly) { this.die() }
     }
 
     rotateLeftMidair() {
@@ -392,11 +396,9 @@ class Player {
 
     doSpin() {
         if (this.canSpin) {
-            this.canSpin = false
+            this.disableSpin()
             this.spin.playAnim({
-                completeCb: () => {
-                    this.canSpin = true
-                }
+                completeCb: () => { this.enableSpin() }
             })
 
             const self = this

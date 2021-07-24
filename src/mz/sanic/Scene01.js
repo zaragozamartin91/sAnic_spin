@@ -86,10 +86,16 @@ class Scene01 extends BaseScene {
             .init('factory_map', 'factory_tiles')
             .createLayer('world')
             .createLayer('back')
+            .createLayer('death')
             .setCollisionByProperty('world', { stand: true, bounce: true })
-        if (GlobalConfig.devProfile()) { this.tileset.renderDebug('world') }
+            .setCollisionByProperty('death', { deadly: true })
+        if (GlobalConfig.devProfile()) { 
+            this.tileset.renderDebug('world') 
+            this.tileset.renderDebug('death', {red: 50, green: 255, blue: 255, alpha: 255}) 
+        }
 
         const worldLayer = this.tileset.getLayer('world')
+        const deathLayer = this.tileset.getLayer('death')
 
         this.bombs = this.physics.add.group();
 
@@ -212,6 +218,11 @@ class Scene01 extends BaseScene {
             this.player.checkWallBounce(tile)
         });
 
+        /* Si el jugador toca un objeto de la capa 'death' este muere */
+        this.physics.add.overlap(deathLayer, this.player.sprite , (_w, tile) => {
+            this.player.checkHazard(tile)
+        })
+
         /* MANEJO DE CAMARA ----------------------------------------------------------------------------------------------------------- */
 
         /* Con esta funcion podemos establecer los limites de la camara */
@@ -236,7 +247,9 @@ class Scene01 extends BaseScene {
         }
 
         this.debugText.setText(`X: ${Math.round(this.player.x)} ; Y: ${Math.round(this.player.y)}, 
-p1x: ${Math.round(this.input.pointer1.x)} ; p2x: ${Math.round(this.input.pointer2.x)}`)
+p1x: ${Math.round(this.input.pointer1.x)} ; p2x: ${Math.round(this.input.pointer2.x)}
+blockedDown: ${this.player.blockedDown()}
+canSpin: ${this.player.canSpin}`)
     }
 }
 
