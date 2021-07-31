@@ -50,6 +50,7 @@ class Scene01 extends BaseScene {
             }
         ]
 
+        // Enemigos tipo cangrejo
         const newCrab = () => {
             return new StaticEnemy(this, { key: 'crab_walk', prefix: 'crab_', suffix: '.png', start: 8, end: 18, animDurationMs: 2000, scale: 0.5 })
         }
@@ -81,7 +82,7 @@ class Scene01 extends BaseScene {
         const wd = Scene01.getWorldDimensions()
         this.bg.init(wd.half_worldWidth, wd.half_worldHeight, wd.worldWidth, wd.worldHeight);
 
-
+        // creando tileset
         this.tileset
             .init('factory_map', 'factory_tiles')
             .createLayer('world')
@@ -149,8 +150,7 @@ class Scene01 extends BaseScene {
         If that occurs it can then optionally invoke your own callback, but for the sake of just colliding with platforms we don't require that */
         this.physics.add.collider(this.player.sprite, worldLayer, this.player.platformHandler())
 
-        this.physics.add.collider(this.stars, worldLayer);
-
+        this.physics.add.collider(this.stars, worldLayer)
 
         //This tells Phaser to check for an overlap between the player and any star in the stars Group
         //this.physics.add.overlap(this.player, this.stars, collectStar, null, this);
@@ -213,15 +213,15 @@ class Scene01 extends BaseScene {
             if (c.tweencfg) this.tweens.add({ ...c.tweencfg, targets: crab })
         })
 
-
-        this.physics.add.overlap(worldLayer, this.player.spin.sprite, (_w, tile) => {
-            this.player.checkWallBounce(tile)
-        });
+        /* Si el jugador gira contra una pared, puede rebotar */
+        this.physics.add.overlap(worldLayer, this.player.spin.sprite, this.player.executeBounce, (_w, tile) => {
+            return this.player.checkWallBounce(tile)
+        }, this.player)
 
         /* Si el jugador toca un objeto de la capa 'death' este muere */
-        this.physics.add.overlap(deathLayer, this.player.sprite , (_w, tile) => {
-            this.player.checkHazard(tile)
-        })
+        this.physics.add.overlap(deathLayer, this.player.sprite , this.player.die, (_w, tile) => {
+            return this.player.checkHazard(tile)
+        }, this.player)
 
         /* MANEJO DE CAMARA ----------------------------------------------------------------------------------------------------------- */
 

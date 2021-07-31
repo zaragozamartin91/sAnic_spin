@@ -366,14 +366,17 @@ class Player {
     }
 
     /**
-     * Chequea y ejecuta condicion de rebote contra un TILE
+     * Chequea condicion de rebote contra un TILE
      * @param {Phaser.Tilemaps.Tile} tile 
      */
     checkWallBounce(tile) {
-        if (tile.properties.bounce && this.goingUp()) {
-            this.bounce()
-            this.spin.disableBody(true, false)
-        }
+        return tile.properties.bounce && this.goingUp()
+    }
+
+    /* Ejecuta un rebote desactivando tambien el cuerpo del giro */
+    executeBounce() {
+        this.bounce()
+        this.spin.disableBody(true, false)
     }
 
     /**
@@ -381,7 +384,7 @@ class Player {
      * @param {Phaser.Tilemaps.Tile} tile 
      */
     checkHazard(tile) {
-        if (tile.properties.deadly) { this.die() }
+        return tile.properties.deadly
     }
 
     rotateLeftMidair() {
