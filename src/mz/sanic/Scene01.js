@@ -11,7 +11,8 @@ import StaticEnemy from './StaticEnemy'
 import Tileset from './Tileset'
 import GlobalConfig from './GlobalConfig'
 
-const PLAYER_START_POS = { x: 100, y: 3000 }
+const PLAYER_START_POS = { x: 667, y: 2200 }
+//const PLAYER_START_POS = { x: 100, y: 3000 }
 const ABYSS_LIMIT = 5000
 const VOID_DEBUG_TEXT = { init: function () { }, setText: function () { } }
 
@@ -47,7 +48,8 @@ class Scene01 extends BaseScene {
             {
                 pos: { x: 1900, y: 2800 }, enemy: newWasp(),
                 tweencfg: { props: { x: 1735 }, duration: 1000, yoyo: true, repeat: -1, flipX: true }
-            }
+            },
+            { pos: { x: 500, y: 2275 }, enemy: newWasp() },
         ]
 
         // Enemigos tipo cangrejo
