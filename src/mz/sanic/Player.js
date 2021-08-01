@@ -87,6 +87,7 @@ class Player {
         this.checkJumpPress = EMPTY_LAMBDA
         this.checkLeftPress = EMPTY_LAMBDA
         this.checkRightPress = EMPTY_LAMBDA
+        this.checkAttackPress = EMPTY_LAMBDA
 
         /* Controla si el personaje puede girar */
         this.canSpin = false
@@ -141,10 +142,11 @@ class Player {
      * Establece los manejadores de input (teclado y tactil)
      * @param {Object} inputHandler Manejador de los inputs del mundo exterior. 
      */
-    setInputManager({ checkJumpPress, checkLeftPress, checkRightPress }) {
+    setInputManager({ checkJumpPress, checkLeftPress, checkRightPress, checkAttackPress }) {
         this.checkJumpPress = checkJumpPress
         this.checkLeftPress = checkLeftPress
         this.checkRightPress = checkRightPress
+        this.checkAttackPress = checkAttackPress
     }
 
     /**
@@ -302,7 +304,7 @@ class Player {
             this.setAccelerationX(0)
             this.playAnim('jump')
 
-            if (this.checkJumpPress()) { return this.doSpin() }
+            if (this.checkAttackPress()) { return this.doSpin() }
             if (this.checkLeftPress()) { return this.floatLeft() }
             if (this.checkRightPress()) { return this.floatRight() }
         }

@@ -1,7 +1,9 @@
 // @ts-check
 
-import Phaser from 'phaser';
+import Phaser from 'phaser'
 import ActionButton from './ActionButton'
+import StaticEnemy from './StaticEnemy'
+
 
 const WORLD_DIMS = { worldWidth: 0, worldHeight: 0, half_worldWidth: 0, half_worldHeight: 0 }
 
@@ -17,6 +19,12 @@ class BaseScene extends Phaser.Scene {
         this.rightButton = new ActionButton(this, 'right_btn')
         this.aButton = new ActionButton(this, 'a_btn')
         this.bButton = new ActionButton(this, 'b_btn')
+
+        // Control actions for character
+        this.leftPress = false
+        this.rightPress = false
+        this.jumpPress = false
+        this.attackPress = false
     }
 
     /**
@@ -68,6 +76,11 @@ class BaseScene extends Phaser.Scene {
         // return this.cursors.up.isDown || (this.pointer1.isDown && this.pointer1.y < this.half_worldHeight)
     }
 
+    checkAttackPress() {
+        return this.cursors.space.isDown || this.attackPress
+        // return this.cursors.up.isDown || (this.pointer1.isDown && this.pointer1.y < this.half_worldHeight)
+    }
+
     preload() { throw new Error('Not implemented') }
 
     create() {
@@ -94,8 +107,11 @@ class BaseScene extends Phaser.Scene {
             .pointerup(() => this.jumpPress = false)
             .pointerout(() => this.jumpPress = false)
 
-
-        this.bButton.init().setPosition({ x: WORLD_DIMS.worldWidth - this.bButton.displayWidth * 0.6, y: WORLD_DIMS.worldHeight - this.bButton.displayHeight })
+        this.bButton.init()
+            .setPosition({ x: WORLD_DIMS.worldWidth - this.bButton.displayWidth * 0.6, y: WORLD_DIMS.worldHeight - this.bButton.displayHeight })
+            .pointerdown(() => this.attackPress = true)
+            .pointerup(() => this.attackPress = false)
+            .pointerout(() => this.attackPress = false)
     }
 
     update() { throw new Error('Not implemented') }
@@ -108,6 +124,16 @@ class BaseScene extends Phaser.Scene {
      */
     numberBetween(lowBound, upBound) {
         return (Math.random() * (upBound - lowBound) + lowBound)
+    }
+
+    /* Crea una nueva instancia de StaticEnemy para una avispa */
+    newWasp() {
+        return new StaticEnemy(this, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
+    }
+
+    /** Crea una nueva instancia de StaticEnemy para un cangrejo */
+    newCrab() {
+        return new StaticEnemy(this, { key: 'crab_walk', prefix: 'crab_', suffix: '.png', start: 8, end: 18, animDurationMs: 2000, scale: 0.5 })
     }
 }
 

@@ -64,7 +64,10 @@ class StaticEnemy {
     /**
      * Reproduce la animacion.
      */
-    playAnim() { this.sprite.anims.play(this.animKey, true); }
+    playAnim() { 
+        this.sprite.anims.play(this.animKey, true)
+        return this 
+    }
 
     /**
      * Reproduce la animacion.

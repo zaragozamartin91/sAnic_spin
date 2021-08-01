@@ -7,7 +7,6 @@ import GameText from './GameText'
 import Explosion from './Explosion'
 import Spin from './Spin'
 import BaseScene from './BaseScene'
-import StaticEnemy from './StaticEnemy'
 import Tileset from './Tileset'
 import GlobalConfig from './GlobalConfig'
 
@@ -39,30 +38,23 @@ class Scene01 extends BaseScene {
 
         this.tileset = new Tileset(this)
 
-        // Enemigos tipo avispa
-        const newWasp = () => {
-            return new StaticEnemy(this, { key: 'wasp', prefix: 'wasp_', suffix: '.png', start: 1, end: 37, animDurationMs: 2000 })
-        }
         this.wasps = [
-            { pos: { x: 1000, y: 2900 }, enemy: newWasp() },
+            { pos: { x: 1000, y: 2900 }, enemy: this.newWasp() },
             {
-                pos: { x: 1900, y: 2800 }, enemy: newWasp(),
+                pos: { x: 1900, y: 2800 }, enemy: this.newWasp(),
                 tweencfg: { props: { x: 1735 }, duration: 1000, yoyo: true, repeat: -1, flipX: true }
             },
-            { pos: { x: 500, y: 2275 }, enemy: newWasp() },
+            { pos: { x: 500, y: 2275 }, enemy: this.newWasp() },
         ]
 
-        // Enemigos tipo cangrejo
-        const newCrab = () => {
-            return new StaticEnemy(this, { key: 'crab_walk', prefix: 'crab_', suffix: '.png', start: 8, end: 18, animDurationMs: 2000, scale: 0.5 })
-        }
+
         this.crabs = [
             {
-                pos: { x: 280, y: 3300 }, enemy: newCrab(),
+                pos: { x: 280, y: 3300 }, enemy: this.newCrab(),
                 tweencfg: { props: { x: 700 }, duration: 3000, yoyo: true, repeat: -1, flipX: true, hold: 500, repeatDelay: 500 }
             },
             {
-                pos: { x: 1260, y: 2220 }, enemy: newCrab(),
+                pos: { x: 1260, y: 2220 }, enemy: this.newCrab(),
                 tweencfg: { props: { x: 1450 }, duration: 2500, yoyo: true, repeat: -1, flipX: true, hold: 500, repeatDelay: 500 }
             },
         ]
@@ -116,9 +108,10 @@ class Scene01 extends BaseScene {
         this.player.init(PLAYER_START_POS.x, PLAYER_START_POS.y)
         this.player.spin = this.spin;
         this.player.setInputManager({
-            checkJumpPress: () => this.checkJumpPress(),
-            checkLeftPress: () => this.checkLeftPress(),
-            checkRightPress: () => this.checkRightPress()
+            checkJumpPress: this.checkJumpPress.bind(this),
+            checkLeftPress: this.checkLeftPress.bind(this),
+            checkRightPress: this.checkRightPress.bind(this),
+            checkAttackPress: this.checkAttackPress.bind(this) 
         })
 
         this.player.setOnDeath(() => {
